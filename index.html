@@ -429,6 +429,117 @@ input{font-family:inherit}
 .vli-info{flex:1}
 .vli-pinyin{font-size:13px;color:var(--red);font-weight:700}
 .vli-pt{font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:2px}
+
+/* ===== Chat (AI conversation) ===== */
+.chat-page{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--cream)}
+.chat-top{
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:#fff;border-bottom:2px solid var(--gold);
+}
+.chat-top .title{flex:1;font-weight:800;color:var(--red);font-family:"Ma Shan Zheng",serif;font-size:22px;letter-spacing:2px}
+.chat-top .top-icon{
+  background:var(--paper);border:1.5px solid var(--gold);
+  width:36px;height:36px;border-radius:18px;font-size:16px;
+  display:flex;align-items:center;justify-content:center;color:var(--ink)
+}
+.chat-body{flex:1;overflow-y:auto;padding:14px;padding-bottom:20px;display:flex;flex-direction:column;gap:10px}
+.chat-empty{
+  text-align:center;color:var(--ink-soft);padding:30px 20px;
+}
+.chat-empty .ce-icon{font-size:54px}
+.chat-empty .ce-title{font-family:"Ma Shan Zheng",serif;font-size:28px;color:var(--red);margin:8px 0 4px;letter-spacing:2px}
+.chat-empty .ce-sub{font-size:13px;font-weight:600;line-height:1.5;max-width:280px;margin:6px auto 16px}
+.chat-empty .ce-cta{
+  display:inline-block;padding:12px 22px;background:var(--red);color:#fff;
+  border:2px solid var(--gold);border-radius:999px;font-weight:800;letter-spacing:1px;
+}
+.bubble{
+  max-width:86%;padding:12px 14px;border-radius:16px;
+  font-size:15px;line-height:1.45;font-weight:600;
+}
+.bubble.user{
+  align-self:flex-end;background:var(--red);color:#fff;
+  border:2px solid var(--gold);border-bottom-right-radius:6px;
+}
+.bubble.ai{
+  align-self:flex-start;background:#fff;color:var(--ink);
+  border:2px solid var(--gold);border-bottom-left-radius:6px;
+}
+.bubble.ai .b-hanzi{
+  font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;
+  color:var(--ink);line-height:1.35;
+}
+.bubble.ai .b-pinyin{font-size:13px;color:var(--red);font-weight:700;margin-top:4px}
+.bubble.ai .b-pt{font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:4px;border-top:1px dashed var(--paper-dark);padding-top:6px}
+.bubble.ai .b-audio{
+  margin-top:8px;background:var(--paper);border:1.5px solid var(--gold);
+  padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;color:var(--ink);
+  display:inline-flex;align-items:center;gap:4px;
+}
+.b-card{
+  align-self:flex-start;max-width:86%;background:#FFFAE6;
+  border:1.5px solid var(--gold);border-left:4px solid var(--red);
+  padding:10px 12px;border-radius:12px;font-size:13px;
+}
+.b-card.suggest{background:#F0FBF8;border-left-color:var(--jade)}
+.b-card-title{font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.b-card.suggest .b-card-title{color:var(--jade)}
+.b-corr-row{margin-bottom:6px;padding-bottom:6px;border-bottom:1px dashed var(--paper-dark)}
+.b-corr-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.b-corr-fix{font-family:"Noto Serif SC",serif;font-weight:900;color:var(--jade);font-size:16px}
+.b-corr-orig{font-family:"Noto Serif SC",serif;color:var(--red);text-decoration:line-through;opacity:.75;margin-right:6px}
+.b-corr-expl{font-size:12px;color:var(--ink-soft);font-weight:600;margin-top:4px;line-height:1.4}
+.b-sug-row{font-family:"Noto Serif SC",serif;font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.b-sug-row:last-child{margin-bottom:0}
+.b-thinking{
+  align-self:flex-start;color:var(--ink-soft);font-size:13px;font-weight:700;
+  background:var(--paper);padding:8px 14px;border-radius:16px;border:1.5px dashed var(--gold);
+}
+.chat-input-wrap{
+  padding:10px 12px;padding-bottom:max(env(safe-area-inset-bottom),10px);
+  background:#fff;border-top:2px solid var(--gold);
+  display:flex;gap:8px;align-items:flex-end;
+}
+.chat-input{
+  flex:1;background:var(--cream);border:1.5px solid var(--paper-dark);
+  border-radius:18px;padding:10px 14px;font-size:15px;color:var(--ink);
+  font-family:inherit;font-weight:600;resize:none;max-height:120px;outline:none;
+}
+.chat-input:focus{border-color:var(--gold)}
+.chat-send{
+  background:var(--red);color:#fff;border:2px solid var(--gold);
+  width:44px;height:44px;border-radius:22px;font-size:20px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.chat-send[disabled]{background:#bbb;border-color:#999}
+
+/* Chat settings modal */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:18px;
+}
+.modal{
+  background:#fff;border-radius:18px;border:2px solid var(--gold);
+  width:100%;max-width:420px;max-height:90vh;overflow-y:auto;
+  padding:20px;
+}
+.modal h2{font-family:"Ma Shan Zheng",serif;color:var(--red);font-size:26px;margin:0 0 4px;letter-spacing:2px}
+.modal .modal-sub{font-size:12px;color:var(--ink-soft);font-weight:600;margin:0 0 14px}
+.modal label{display:block;font-size:12px;font-weight:800;color:var(--ink);margin:12px 0 6px;letter-spacing:1px;text-transform:uppercase}
+.modal input[type=text],.modal input[type=password],.modal select{
+  width:100%;background:var(--cream);border:1.5px solid var(--paper-dark);
+  border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;font-weight:600;color:var(--ink);
+  outline:none;
+}
+.modal input:focus,.modal select:focus{border-color:var(--gold)}
+.modal .hint{font-size:11px;color:var(--ink-soft);margin-top:4px;line-height:1.4}
+.modal .hint a{color:var(--red);font-weight:700}
+.modal .modal-actions{display:flex;gap:8px;margin-top:18px}
+.modal .modal-actions button{flex:1;padding:12px;border-radius:10px;font-weight:800;font-size:14px;border:2px solid var(--gold)}
+.modal .btn-save{background:var(--red);color:#fff}
+.modal .btn-cancel{background:#fff;color:var(--ink)}
+.modal .btn-danger{background:#fff;color:var(--red);border-color:var(--red)}
+
 </style>
 </head>
 <body>
@@ -1303,6 +1414,10 @@ function renderHome(){
           Conquistas (${state.unlockedBadges.length})
         </button>
       </div>
+      <button class="home-action" data-action="chat" style="display:block;width:100%;margin-top:10px;background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%);color:#fff;border-color:var(--gold);font-size:15px;padding:16px 12px">
+        <span class="ha-icon" style="font-size:26px">💬</span>
+        Conversar com o tutor IA · 中文对话
+      </button>
     </div>`;
 
   app.querySelectorAll('[data-level]').forEach(el=>{
@@ -1313,6 +1428,7 @@ function renderHome(){
   });
   app.querySelector('[data-action="badges"]').addEventListener('click',()=>{ screen={name:'badges'}; render(); });
   app.querySelector('[data-action="vocab"]').addEventListener('click',()=>{ screen={name:'vocab'}; render(); });
+  app.querySelector('[data-action="chat"]').addEventListener('click',()=>{ screen={name:'chat'}; render(); });
 }
 
 function renderLevel(){
@@ -1882,6 +1998,386 @@ function renderVocab(){
   });
 }
 
+/* ============================================================
+   CHAT — AI conversation tutor (Anthropic Claude API, BYOK)
+   ============================================================ */
+const CHAT_STORAGE = {
+  key: '@mandarim/v2/chat/apikey',
+  model: '@mandarim/v2/chat/model',
+  history: '@mandarim/v2/chat/history',
+  showPinyin: '@mandarim/v2/chat/showPinyin',
+  showPt: '@mandarim/v2/chat/showPt',
+};
+const MODELS = [
+  { id:'claude-opus-4-7', label:'Opus 4.7 (melhor, mais caro)' },
+  { id:'claude-sonnet-4-6', label:'Sonnet 4.6 (equilibrado)' },
+  { id:'claude-haiku-4-5', label:'Haiku 4.5 (rápido, barato)' },
+];
+const MAX_HISTORY_TURNS = 20;
+
+function chatGet(key, def){ try{ const v=localStorage.getItem(key); return v==null?def:JSON.parse(v); }catch{ return def; } }
+function chatSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch{} }
+
+function chatHistory(){ return chatGet(CHAT_STORAGE.history, []); }
+function chatSetHistory(h){ chatSet(CHAT_STORAGE.history, h); }
+function chatApiKey(){ return chatGet(CHAT_STORAGE.key, ''); }
+function chatModel(){ return chatGet(CHAT_STORAGE.model, MODELS[0].id); }
+
+let chatPending = false;
+let chatModalOpen = false;
+let chatDraft = '';
+
+function chatSystemPrompt(){
+  const learned = state.learnedVocab.map(id=>{
+    const v = V[id]; if(!v) return null;
+    return `${v.hanzi} (${v.pinyin}) = ${v.pt}`;
+  }).filter(Boolean).join('; ');
+  const completedLevels = state.completedLevels.length;
+  const totalLevels = LEVELS.length;
+  return `Você é um tutor amigável e paciente de chinês mandarim para um estudante brasileiro que está aprendendo via um app.
+
+NÍVEL DO ALUNO:
+- Lições completadas: ${state.completedLessons.length}
+- Níveis terminados: ${completedLevels} de ${totalLevels}
+- Palavras já aprendidas (${state.learnedVocab.length}): ${learned || '(nenhuma ainda)'}
+
+REGRAS:
+1. Responda em mandarim usando primariamente o vocabulário que o aluno já conhece. Você pode introduzir 1-2 palavras novas por turno, mas sempre traduza claramente.
+2. Mantenha respostas curtas e conversacionais (1-3 frases). Não dê aulas longas — converse de verdade.
+3. Se o aluno escreveu algo em chinês com erros (gramática, tom, escolha de caractere), liste em "corrections" com explicação curta em português. Se o aluno escreveu certo, deixe "corrections" vazio.
+4. Em "suggestions", ofereça 1-3 maneiras alternativas/melhores de dizer o que o aluno tentou dizer. Se não há nada a sugerir, deixe vazio.
+5. Se o aluno escrever em português ou em português+chinês misturado, está OK — traduza ou responda à intenção dele em chinês.
+6. Use tons corretos no pinyin (ā á ǎ à etc).
+7. Seja encorajador. Comemore quando o aluno acertar.
+8. Adeque a complexidade ao nível do aluno. Para iniciantes (poucas lições), use frases muito simples.
+
+Responda APENAS no formato JSON especificado.`;
+}
+
+const CHAT_SCHEMA = {
+  type:'object',
+  properties:{
+    reply_hanzi:{ type:'string', description:'Sua resposta em caracteres chineses (hanzi).' },
+    reply_pinyin:{ type:'string', description:'A mesma resposta em pinyin com tons.' },
+    reply_pt:{ type:'string', description:'Tradução em português brasileiro.' },
+    corrections:{
+      type:'array',
+      description:'Correções aos erros do aluno. Vazio se não houver.',
+      items:{
+        type:'object',
+        properties:{
+          original:{ type:'string', description:'Trecho original do aluno com erro.' },
+          fixed:{ type:'string', description:'Versão corrigida em hanzi.' },
+          explanation:{ type:'string', description:'Explicação breve do erro em português.' },
+        },
+        required:['original','fixed','explanation'],
+        additionalProperties:false,
+      },
+    },
+    suggestions:{
+      type:'array',
+      description:'Sugestões de frases alternativas em hanzi (com pinyin e tradução opcional, ex: 我很好 (wǒ hěn hǎo) — estou bem). Vazio se não houver.',
+      items:{ type:'string' },
+    },
+  },
+  required:['reply_hanzi','reply_pinyin','reply_pt','corrections','suggestions'],
+  additionalProperties:false,
+};
+
+async function callClaude(userText){
+  const apiKey = chatApiKey();
+  if(!apiKey) throw new Error('NO_KEY');
+  const model = chatModel();
+  const history = chatHistory();
+  const recentTurns = history.slice(-MAX_HISTORY_TURNS*2);
+
+  const messages = [];
+  for(const t of recentTurns){
+    if(t.role === 'user'){
+      messages.push({ role:'user', content: t.text });
+    } else if(t.role === 'assistant' && t.data){
+      messages.push({ role:'assistant', content: JSON.stringify(t.data) });
+    }
+  }
+  messages.push({ role:'user', content: userText });
+
+  const body = {
+    model,
+    max_tokens: 1024,
+    system: [{
+      type:'text',
+      text: chatSystemPrompt(),
+      cache_control:{ type:'ephemeral' },
+    }],
+    output_config:{
+      format:{ type:'json_schema', schema: CHAT_SCHEMA },
+    },
+    messages,
+  };
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if(!res.ok){
+    let msg = `HTTP ${res.status}`;
+    try{
+      const err = await res.json();
+      msg = err?.error?.message || msg;
+    }catch{}
+    if(res.status === 401) throw new Error('BAD_KEY');
+    if(res.status === 429) throw new Error('RATE_LIMIT:'+msg);
+    if(res.status === 400) throw new Error('BAD_REQUEST:'+msg);
+    throw new Error('API:'+msg);
+  }
+
+  const data = await res.json();
+  const textBlock = (data.content||[]).find(b=>b.type==='text');
+  if(!textBlock) throw new Error('NO_CONTENT');
+  let parsed;
+  try{ parsed = JSON.parse(textBlock.text); }
+  catch{ throw new Error('PARSE_ERROR'); }
+  return { parsed, usage: data.usage };
+}
+
+async function sendChatMessage(text){
+  text = (text||'').trim();
+  if(!text || chatPending) return;
+  if(!chatApiKey()){ chatModalOpen = true; render(); return; }
+
+  const history = chatHistory();
+  history.push({ role:'user', text, ts: Date.now() });
+  chatSetHistory(history);
+  chatDraft = '';
+  chatPending = true;
+  render();
+
+  try{
+    const { parsed } = await callClaude(text);
+    const h2 = chatHistory();
+    h2.push({ role:'assistant', data: parsed, ts: Date.now() });
+    chatSetHistory(h2);
+  }catch(e){
+    const h2 = chatHistory();
+    let msg = 'Erro ao chamar a API.';
+    const m = String(e.message||e);
+    if(m==='NO_KEY') msg = 'Configure sua chave da API em ⚙ Ajustes.';
+    else if(m==='BAD_KEY') msg = 'Chave da API inválida ou sem créditos. Verifique em ⚙ Ajustes.';
+    else if(m.startsWith('RATE_LIMIT')) msg = 'Você atingiu o limite de requisições. Espere um pouco e tente de novo.';
+    else if(m.startsWith('BAD_REQUEST')) msg = 'Requisição inválida: ' + m.slice(12);
+    else if(m.startsWith('API')) msg = 'Erro da API: ' + m.slice(4);
+    else if(m==='PARSE_ERROR') msg = 'Resposta da IA veio em formato inesperado. Tente de novo.';
+    else msg = 'Erro de rede ou CORS. Verifique sua conexão.';
+    h2.push({ role:'error', text: msg, ts: Date.now() });
+    chatSetHistory(h2);
+  }finally{
+    chatPending = false;
+    render();
+  }
+}
+
+function escapeHtml2(s){ return escapeHtml(s); }
+
+function renderChat(){
+  document.body.style.background = '';
+  const history = chatHistory();
+  const hasKey = !!chatApiKey();
+  const showPinyin = chatGet(CHAT_STORAGE.showPinyin, true);
+  const showPt = chatGet(CHAT_STORAGE.showPt, true);
+
+  let bodyHtml;
+  if(history.length === 0){
+    bodyHtml = `
+      <div class="chat-empty">
+        <div class="ce-icon">🐉</div>
+        <div class="ce-title">和老师聊天</div>
+        <div class="ce-sub">Pratique mandarim com um tutor IA. Ele entende português, corrige seus erros e sugere frases melhores.</div>
+        ${hasKey
+          ? `<button class="ce-cta" data-action="suggest-start">💬 Começar conversa</button>`
+          : `<button class="ce-cta" data-action="open-settings">🔑 Configurar chave da API</button>`
+        }
+      </div>`;
+  } else {
+    bodyHtml = history.map((t,i)=>{
+      if(t.role === 'user'){
+        return `<div class="bubble user">${escapeHtml2(t.text)}</div>`;
+      } else if(t.role === 'error'){
+        return `<div class="bubble ai" style="border-color:var(--red);color:var(--red)">⚠ ${escapeHtml2(t.text)}</div>`;
+      } else {
+        const d = t.data || {};
+        const corrHtml = (d.corrections||[]).length === 0 ? '' : `
+          <div class="b-card">
+            <div class="b-card-title">✎ Correções</div>
+            ${d.corrections.map(c=>`
+              <div class="b-corr-row">
+                <span class="b-corr-orig">${escapeHtml2(c.original||'')}</span>
+                <span class="b-corr-fix">${escapeHtml2(c.fixed||'')}</span>
+                <div class="b-corr-expl">${escapeHtml2(c.explanation||'')}</div>
+              </div>`).join('')}
+          </div>`;
+        const sugHtml = (d.suggestions||[]).length === 0 ? '' : `
+          <div class="b-card suggest">
+            <div class="b-card-title">💡 Sugestões</div>
+            ${d.suggestions.map(s=>`<div class="b-sug-row">${escapeHtml2(s)}</div>`).join('')}
+          </div>`;
+        return `
+          <div class="bubble ai">
+            <div class="b-hanzi">${escapeHtml2(d.reply_hanzi||'')}</div>
+            ${showPinyin && d.reply_pinyin ? `<div class="b-pinyin">${escapeHtml2(d.reply_pinyin)}</div>` : ''}
+            ${showPt && d.reply_pt ? `<div class="b-pt">${escapeHtml2(d.reply_pt)}</div>` : ''}
+            <button class="b-audio" data-action="speak" data-text="${escapeHtml2(d.reply_hanzi||'')}">🔊 Ouvir</button>
+          </div>
+          ${corrHtml}
+          ${sugHtml}`;
+      }
+    }).join('');
+    if(chatPending){
+      bodyHtml += `<div class="b-thinking">老师在想… (pensando)</div>`;
+    }
+  }
+
+  const sendDisabled = chatPending || !(chatDraft||'').trim();
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="chat-page">
+      <div class="chat-top">
+        <button class="top-icon" data-action="back-home">←</button>
+        <div class="title">中文对话</div>
+        <button class="top-icon" data-action="open-settings" title="Ajustes">⚙</button>
+      </div>
+      <div class="chat-body" id="chat-body">${bodyHtml}</div>
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chat-input" rows="1" placeholder="${hasKey?'Escreva em português ou chinês…':'Configure sua chave primeiro (⚙)'}" ${hasKey?'':'disabled'}></textarea>
+        <button class="chat-send" data-action="send" ${sendDisabled||!hasKey?'disabled':''}>➤</button>
+      </div>
+    </div>
+    ${chatModalOpen ? renderChatSettingsModal() : ''}`;
+
+  // Bind
+  app.querySelector('[data-action="back-home"]').addEventListener('click',()=>{ screen={name:'home'}; chatModalOpen=false; render(); });
+  app.querySelector('[data-action="open-settings"]').addEventListener('click',()=>{ chatModalOpen=true; render(); });
+  const startBtn = app.querySelector('[data-action="suggest-start"]');
+  if(startBtn) startBtn.addEventListener('click',()=>{ sendChatMessage('你好！我们用中文聊天吧。'); });
+  const openSettings2 = app.querySelectorAll('[data-action="open-settings"]');
+  openSettings2.forEach(el=>{ if(!el.dataset.bound){ el.dataset.bound='1'; } });
+
+  app.querySelectorAll('[data-action="speak"]').forEach(el=>{
+    el.addEventListener('click',()=>speak(el.dataset.text));
+  });
+  const input = app.querySelector('#chat-input');
+  if(input){
+    input.value = chatDraft;
+    input.addEventListener('input',()=>{
+      chatDraft = input.value;
+      const sb = app.querySelector('[data-action="send"]');
+      if(sb){
+        if(chatPending || !chatDraft.trim() || !hasKey) sb.setAttribute('disabled',''); else sb.removeAttribute('disabled');
+      }
+      input.style.height='auto';
+      input.style.height=Math.min(120, input.scrollHeight)+'px';
+    });
+    input.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChatMessage(input.value); }
+    });
+  }
+  const sendBtn = app.querySelector('[data-action="send"]');
+  if(sendBtn) sendBtn.addEventListener('click',()=>{
+    const v = (app.querySelector('#chat-input')||{}).value || chatDraft;
+    sendChatMessage(v);
+  });
+
+  // Scroll to bottom
+  const cb = app.querySelector('#chat-body');
+  if(cb) cb.scrollTop = cb.scrollHeight;
+
+  // Settings modal events
+  if(chatModalOpen) bindChatSettingsModal();
+}
+
+function renderChatSettingsModal(){
+  const key = chatApiKey();
+  const model = chatModel();
+  const showPinyin = chatGet(CHAT_STORAGE.showPinyin, true);
+  const showPt = chatGet(CHAT_STORAGE.showPt, true);
+  const masked = key ? '••••••••'+key.slice(-6) : '';
+  return `
+    <div class="modal-overlay" data-action="modal-close-bg">
+      <div class="modal" onclick="event.stopPropagation()">
+        <h2>设置 Ajustes do chat</h2>
+        <p class="modal-sub">Sua chave fica salva só no seu celular (localStorage).</p>
+
+        <label>Chave da API Anthropic</label>
+        <input type="password" id="m-key" placeholder="${masked||'sk-ant-...'}" autocomplete="off" autocapitalize="off">
+        <div class="hint">
+          Pegue uma em <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.
+          Você precisa adicionar crédito na sua conta Anthropic — cada conversa custa centavos.
+          ${key?'<br><strong>Chave atual salva</strong> (deixe em branco pra manter).':''}
+        </div>
+
+        <label>Modelo</label>
+        <select id="m-model">
+          ${MODELS.map(m=>`<option value="${m.id}" ${m.id===model?'selected':''}>${escapeHtml2(m.label)}</option>`).join('')}
+        </select>
+
+        <label>Exibição</label>
+        <div style="display:flex;gap:14px;font-size:13px;font-weight:700;color:var(--ink)">
+          <label style="text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:6px">
+            <input type="checkbox" id="m-pinyin" ${showPinyin?'checked':''}> Mostrar pinyin
+          </label>
+          <label style="text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:6px">
+            <input type="checkbox" id="m-pt" ${showPt?'checked':''}> Mostrar PT
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" data-action="modal-cancel">Cancelar</button>
+          <button class="btn-save" data-action="modal-save">Salvar</button>
+        </div>
+        <div class="modal-actions" style="margin-top:8px">
+          <button class="btn-danger" data-action="modal-clear-key">Apagar chave</button>
+          <button class="btn-danger" data-action="modal-clear-chat">Limpar conversa</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function bindChatSettingsModal(){
+  const close = ()=>{ chatModalOpen=false; render(); };
+  app.querySelector('[data-action="modal-close-bg"]').addEventListener('click',close);
+  app.querySelector('[data-action="modal-cancel"]').addEventListener('click',close);
+  app.querySelector('[data-action="modal-save"]').addEventListener('click',()=>{
+    const keyEl = document.getElementById('m-key');
+    const modelEl = document.getElementById('m-model');
+    const pyEl = document.getElementById('m-pinyin');
+    const ptEl = document.getElementById('m-pt');
+    const newKey = (keyEl.value||'').trim();
+    if(newKey) chatSet(CHAT_STORAGE.key, newKey);
+    chatSet(CHAT_STORAGE.model, modelEl.value);
+    chatSet(CHAT_STORAGE.showPinyin, !!pyEl.checked);
+    chatSet(CHAT_STORAGE.showPt, !!ptEl.checked);
+    close();
+  });
+  app.querySelector('[data-action="modal-clear-key"]').addEventListener('click',()=>{
+    if(confirm('Apagar a chave salva neste dispositivo?')){
+      localStorage.removeItem(CHAT_STORAGE.key);
+      close();
+    }
+  });
+  app.querySelector('[data-action="modal-clear-chat"]').addEventListener('click',()=>{
+    if(confirm('Apagar todo o histórico de conversa?')){
+      chatSetHistory([]);
+      close();
+    }
+  });
+}
+
 function render(){
   state = applyHeartRegen(state);
   saveState();
@@ -1893,6 +2389,7 @@ function render(){
     case 'failed': return renderFailed();
     case 'badges': return renderBadges();
     case 'vocab': return renderVocab();
+    case 'chat': return renderChat();
   }
 }
 
