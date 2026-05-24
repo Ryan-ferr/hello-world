@@ -2002,16 +2002,16 @@ function renderVocab(){
    CHAT — AI conversation tutor (Anthropic Claude API, BYOK)
    ============================================================ */
 const CHAT_STORAGE = {
-  key: '@mandarim/v2/chat/apikey',
-  model: '@mandarim/v2/chat/model',
+  key: '@mandarim/v2/chat/gemini_apikey',
+  model: '@mandarim/v2/chat/gemini_model',
   history: '@mandarim/v2/chat/history',
   showPinyin: '@mandarim/v2/chat/showPinyin',
   showPt: '@mandarim/v2/chat/showPt',
 };
 const MODELS = [
-  { id:'claude-opus-4-7', label:'Opus 4.7 (melhor, mais caro)' },
-  { id:'claude-sonnet-4-6', label:'Sonnet 4.6 (equilibrado)' },
-  { id:'claude-haiku-4-5', label:'Haiku 4.5 (rápido, barato)' },
+  { id:'gemini-2.5-flash', label:'Gemini 2.5 Flash (rápido, free tier generoso)' },
+  { id:'gemini-2.5-pro', label:'Gemini 2.5 Pro (qualidade máxima)' },
+  { id:'gemini-2.0-flash', label:'Gemini 2.0 Flash (estável)' },
 ];
 const MAX_HISTORY_TURNS = 20;
 
@@ -2021,7 +2021,10 @@ function chatSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val));
 function chatHistory(){ return chatGet(CHAT_STORAGE.history, []); }
 function chatSetHistory(h){ chatSet(CHAT_STORAGE.history, h); }
 function chatApiKey(){ return chatGet(CHAT_STORAGE.key, ''); }
-function chatModel(){ return chatGet(CHAT_STORAGE.model, MODELS[0].id); }
+function chatModel(){
+  const stored = chatGet(CHAT_STORAGE.model, MODELS[0].id);
+  return MODELS.some(m=>m.id===stored) ? stored : MODELS[0].id;
+}
 
 let chatPending = false;
 let chatModalOpen = false;
@@ -2055,96 +2058,100 @@ Responda APENAS no formato JSON especificado.`;
 }
 
 const CHAT_SCHEMA = {
-  type:'object',
+  type:'OBJECT',
   properties:{
-    reply_hanzi:{ type:'string', description:'Sua resposta em caracteres chineses (hanzi).' },
-    reply_pinyin:{ type:'string', description:'A mesma resposta em pinyin com tons.' },
-    reply_pt:{ type:'string', description:'Tradução em português brasileiro.' },
+    reply_hanzi:{ type:'STRING', description:'Sua resposta em caracteres chineses (hanzi).' },
+    reply_pinyin:{ type:'STRING', description:'A mesma resposta em pinyin com tons.' },
+    reply_pt:{ type:'STRING', description:'Tradução em português brasileiro.' },
     corrections:{
-      type:'array',
-      description:'Correções aos erros do aluno. Vazio se não houver.',
+      type:'ARRAY',
+      description:'Correções aos erros do aluno. Array vazio se não houver erros.',
       items:{
-        type:'object',
+        type:'OBJECT',
         properties:{
-          original:{ type:'string', description:'Trecho original do aluno com erro.' },
-          fixed:{ type:'string', description:'Versão corrigida em hanzi.' },
-          explanation:{ type:'string', description:'Explicação breve do erro em português.' },
+          original:{ type:'STRING', description:'Trecho original do aluno com erro.' },
+          fixed:{ type:'STRING', description:'Versão corrigida em hanzi.' },
+          explanation:{ type:'STRING', description:'Explicação breve do erro em português.' },
         },
         required:['original','fixed','explanation'],
-        additionalProperties:false,
+        propertyOrdering:['original','fixed','explanation'],
       },
     },
     suggestions:{
-      type:'array',
-      description:'Sugestões de frases alternativas em hanzi (com pinyin e tradução opcional, ex: 我很好 (wǒ hěn hǎo) — estou bem). Vazio se não houver.',
-      items:{ type:'string' },
+      type:'ARRAY',
+      description:'Sugestões de frases alternativas em hanzi com pinyin (ex: "我很好 (wǒ hěn hǎo) — estou bem"). Array vazio se não houver.',
+      items:{ type:'STRING' },
     },
   },
   required:['reply_hanzi','reply_pinyin','reply_pt','corrections','suggestions'],
-  additionalProperties:false,
+  propertyOrdering:['reply_hanzi','reply_pinyin','reply_pt','corrections','suggestions'],
 };
 
-async function callClaude(userText){
+async function callGemini(userText){
   const apiKey = chatApiKey();
   if(!apiKey) throw new Error('NO_KEY');
   const model = chatModel();
   const history = chatHistory();
   const recentTurns = history.slice(-MAX_HISTORY_TURNS*2);
 
-  const messages = [];
+  const contents = [];
   for(const t of recentTurns){
     if(t.role === 'user'){
-      messages.push({ role:'user', content: t.text });
+      contents.push({ role:'user', parts:[{ text: t.text }] });
     } else if(t.role === 'assistant' && t.data){
-      messages.push({ role:'assistant', content: JSON.stringify(t.data) });
+      contents.push({ role:'model', parts:[{ text: JSON.stringify(t.data) }] });
     }
   }
-  messages.push({ role:'user', content: userText });
+  contents.push({ role:'user', parts:[{ text: userText }] });
 
   const body = {
-    model,
-    max_tokens: 1024,
-    system: [{
-      type:'text',
-      text: chatSystemPrompt(),
-      cache_control:{ type:'ephemeral' },
-    }],
-    output_config:{
-      format:{ type:'json_schema', schema: CHAT_SCHEMA },
+    system_instruction:{ parts:[{ text: chatSystemPrompt() }] },
+    contents,
+    generationConfig:{
+      responseMimeType:'application/json',
+      responseSchema: CHAT_SCHEMA,
+      maxOutputTokens: 1024,
+      temperature: 0.8,
     },
-    messages,
   };
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const res = await fetch(url, {
     method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true',
-    },
+    headers:{ 'Content-Type':'application/json' },
     body: JSON.stringify(body),
   });
 
   if(!res.ok){
     let msg = `HTTP ${res.status}`;
+    let errStatus = '';
     try{
       const err = await res.json();
       msg = err?.error?.message || msg;
+      errStatus = err?.error?.status || '';
     }catch{}
-    if(res.status === 401) throw new Error('BAD_KEY');
+    if(res.status === 400 && /API key/i.test(msg)) throw new Error('BAD_KEY');
+    if(res.status === 401 || res.status === 403) throw new Error('BAD_KEY');
     if(res.status === 429) throw new Error('RATE_LIMIT:'+msg);
     if(res.status === 400) throw new Error('BAD_REQUEST:'+msg);
     throw new Error('API:'+msg);
   }
 
   const data = await res.json();
-  const textBlock = (data.content||[]).find(b=>b.type==='text');
-  if(!textBlock) throw new Error('NO_CONTENT');
+  const candidate = data.candidates?.[0];
+  if(!candidate) throw new Error('NO_CONTENT');
+  const finish = candidate.finishReason;
+  if(finish && finish !== 'STOP' && finish !== 'MAX_TOKENS'){
+    if(finish === 'SAFETY') throw new Error('API:Resposta bloqueada por filtros de segurança do Gemini. Tente reformular.');
+    if(finish === 'RECITATION') throw new Error('API:Resposta bloqueada (recitação). Tente reformular.');
+    throw new Error('API:Geração interrompida ('+finish+').');
+  }
+  const textPart = (candidate.content?.parts||[]).find(p=>typeof p.text==='string');
+  if(!textPart) throw new Error('NO_CONTENT');
   let parsed;
-  try{ parsed = JSON.parse(textBlock.text); }
+  try{ parsed = JSON.parse(textPart.text); }
   catch{ throw new Error('PARSE_ERROR'); }
-  return { parsed, usage: data.usage };
+  return { parsed, usage: data.usageMetadata };
 }
 
 async function sendChatMessage(text){
@@ -2160,7 +2167,7 @@ async function sendChatMessage(text){
   render();
 
   try{
-    const { parsed } = await callClaude(text);
+    const { parsed } = await callGemini(text);
     const h2 = chatHistory();
     h2.push({ role:'assistant', data: parsed, ts: Date.now() });
     chatSetHistory(h2);
@@ -2313,11 +2320,11 @@ function renderChatSettingsModal(){
         <h2>设置 Ajustes do chat</h2>
         <p class="modal-sub">Sua chave fica salva só no seu celular (localStorage).</p>
 
-        <label>Chave da API Anthropic</label>
-        <input type="password" id="m-key" placeholder="${masked||'sk-ant-...'}" autocomplete="off" autocapitalize="off">
+        <label>Chave da API Google Gemini</label>
+        <input type="password" id="m-key" placeholder="${masked||'AIza...'}" autocomplete="off" autocapitalize="off">
         <div class="hint">
-          Pegue uma em <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.
-          Você precisa adicionar crédito na sua conta Anthropic — cada conversa custa centavos.
+          Pegue uma chave grátis em <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.
+          O Gemini tem free tier generoso (~1500 reqs/dia no Flash) — não precisa adicionar cartão de crédito.
           ${key?'<br><strong>Chave atual salva</strong> (deixe em branco pra manter).':''}
         </div>
 
