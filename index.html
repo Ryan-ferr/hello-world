@@ -1073,28 +1073,73 @@ let screen = { name:'home' };
    ÁUDIO (TTS do navegador)
    ============================================================ */
 let zhVoice = null;
+let voicesReady = false;
+let audioWarmed = false;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
+  if(voices && voices.length) voicesReady = true;
   zhVoice = voices.find(v=>/^zh(-|_)?(CN|Hans)/i.test(v.lang))
+         || voices.find(v=>/^cmn/i.test(v.lang))
          || voices.find(v=>/^zh/i.test(v.lang))
          || null;
+  updateAudioNotice();
 }
 if('speechSynthesis' in window){
   pickVoice();
   speechSynthesis.onvoiceschanged = pickVoice;
+  // Some browsers populate voices lazily — retry a couple of times
+  setTimeout(pickVoice, 500);
+  setTimeout(pickVoice, 1500);
 }
 function speak(text){
-  if(!('speechSynthesis' in window)) return;
+  if(!('speechSynthesis' in window)){ showAudioToast('Seu navegador não suporta áudio (Web Speech API).'); return; }
   try{
+    // Warm up the engine on first user gesture (helps iOS/Safari)
+    if(!audioWarmed){
+      audioWarmed = true;
+      const warm = new SpeechSynthesisUtterance('');
+      warm.volume = 0;
+      try{ speechSynthesis.speak(warm); }catch{}
+    }
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'zh-CN';
     if(zhVoice) u.voice = zhVoice;
     u.rate = 0.85;
     u.pitch = 1;
+    let spoke = false;
+    u.onstart = ()=>{ spoke = true; };
+    u.onerror = ()=>{ if(!spoke) showAudioToast(audioMissingMsg()); };
     speechSynthesis.speak(u);
-  }catch{}
+    // If nothing happened after 1.2s, likely no usable voice
+    setTimeout(()=>{ if(!spoke && !speechSynthesis.speaking) showAudioToast(audioMissingMsg()); }, 1200);
+  }catch{ showAudioToast(audioMissingMsg()); }
+}
+function audioMissingMsg(){
+  return zhVoice
+    ? 'Não foi possível tocar o áudio agora. Toque novamente.'
+    : 'Nenhuma voz em chinês (zh-CN) encontrada. Instale uma voz chinesa nas configurações de TTS do seu sistema.';
+}
+let toastTimer = null;
+function showAudioToast(msg){
+  let el = document.getElementById('audio-toast');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'audio-toast';
+    el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1A1A1A;color:#fff;padding:12px 16px;border-radius:12px;border:2px solid #D4AF37;font-size:13px;font-weight:700;max-width:88%;text-align:center;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3)';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.style.display='none'; }, 4500);
+}
+function updateAudioNotice(){
+  const banner = document.getElementById('voice-banner');
+  if(!banner) return;
+  if(!voicesReady) return;
+  banner.style.display = zhVoice ? 'none' : 'block';
 }
 
 /* ============================================================
@@ -1242,6 +1287,9 @@ function renderHome(){
       <div class="home-hero">
         <div class="home-title">学中文</div>
         <p class="home-sub">Aprenda mandarim — do "olá" à fluência</p>
+      </div>
+      <div id="voice-banner" style="display:none;background:#FFF3D6;border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--ink-soft);font-weight:600;line-height:1.4">
+        <strong style="color:var(--red)">⚠ Sem voz em chinês</strong> — para ouvir os áudios, instale uma voz <code>zh-CN</code> nas configurações de Texto-para-fala do seu Android (Configurações → Idiomas → Saída de texto-para-fala → Google Speech Services → idiomas → instalar chinês).
       </div>
       <div class="home-divider"><span>课程 LIÇÕES</span></div>
       ${cards}
@@ -1556,11 +1604,7 @@ function renderLesson(){
 
   bindLessonEvents(ex,level,lesson,total);
 
-  // Auto-play audio on entry for listen exercises
-  if((ex.type==='listen'||ex.type==='listenPt') && !screen.checked && !screen.audioPlayed){
-    screen.audioPlayed = true;
-    setTimeout(()=>speak(V[ex.vocabId].hanzi),300);
-  }
+  // (auto-play removed — TTS exige gesto do usuário em muitos navegadores)
   // Setup canvas if write
   if(ex.type==='write') setupCanvas();
 }
