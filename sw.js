@@ -1,4 +1,4 @@
-const CACHE = 'mandarim-v3';
+const CACHE = 'mandarim-v4';
 const ASSETS = [
   './',
   './index.html',
