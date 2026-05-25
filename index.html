@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#C8102E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>学中文 · Mandarim</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#C8102E;
+  --red-deep:#8B0000;
+  --red-soft:#E63946;
+  --gold:#D4AF37;
+  --gold-light:#F4D03F;
+  --gold-bright:#FFDE00;
+  --cream:#FFF8E7;
+  --paper:#F5E6D3;
+  --paper-dark:#E8D5B7;
+  --ink:#1A1A1A;
+  --ink-soft:#4A3F35;
+  --jade:#2A9D8F;
+  --bamboo:#4A7C2E;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;
+  font-family:"ZCOOL XiaoWei",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
+}
+body{
+  min-height:100vh;min-height:100dvh;
+  display:flex;flex-direction:column;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(212,175,55,.08) 0, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(200,16,46,.05) 0, transparent 45%),
+    var(--cream);
+}
+.hanzi-font{font-family:"Noto Serif SC","Songti SC","SimSun",serif;font-weight:700}
+.brush-font{font-family:"Ma Shan Zheng","ZCOOL XiaoWei",cursive}
+#app{flex:1;display:flex;flex-direction:column}
+button{font-family:inherit;cursor:pointer;border:none;color:inherit}
+input{font-family:inherit}
+
+/* ===== Status bar ===== */
+.status{
+  display:flex;align-items:center;gap:10px;
+  padding:max(env(safe-area-inset-top),12px) 16px 10px;
+  background:linear-gradient(180deg,#fff 0%,var(--cream) 100%);
+  border-bottom:2px solid var(--gold);
+  position:relative;
+}
+.status::after{
+  content:"";position:absolute;left:0;right:0;bottom:-6px;height:4px;
+  background:repeating-linear-gradient(90deg,var(--red) 0 12px,transparent 12px 16px);
+  opacity:.5;
+}
+.pill{
+  display:flex;align-items:center;gap:5px;
+  background:#fff;padding:6px 11px;border-radius:999px;
+  font-weight:700;font-size:13px;color:var(--ink);
+  border:1.5px solid var(--gold);
+}
+.pill.hearts{border-color:var(--red);color:var(--red)}
+.xp-wrap{flex:1}
+.xp-bg{height:10px;background:var(--paper);border-radius:5px;overflow:hidden;border:1px solid var(--paper-dark)}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--gold-bright),var(--gold));transition:width .3s}
+.xp-label{font-size:10px;color:var(--ink-soft);margin-top:3px;text-align:center;font-weight:700}
+
+/* ===== Home ===== */
+.home{padding:18px 16px 40px;flex:1;overflow-y:auto}
+.home-hero{
+  position:relative;text-align:center;padding:22px 12px 24px;margin-bottom:18px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,222,0,.15) 0, transparent 60%),
+    linear-gradient(180deg,#fff 0%,var(--paper) 100%);
+  border-radius:18px;
+  border:2px solid var(--gold);
+  overflow:hidden;
+}
+.home-hero::before,.home-hero::after{
+  content:"";position:absolute;width:46px;height:60px;top:10px;
+  background:
+    radial-gradient(ellipse at 50% 40%, var(--red) 60%, var(--red-deep) 100%);
+  border-radius:50%;
+  border:2px solid var(--gold);
+  box-shadow:0 4px 8px rgba(139,0,0,.25);
+}
+.home-hero::before{left:14px;transform:rotate(-8deg)}
+.home-hero::after{right:14px;transform:rotate(8deg)}
+.home-title{
+  font-family:"Ma Shan Zheng","Noto Serif SC",serif;
+  font-size:54px;color:var(--red);margin:6px 0 0;
+  text-shadow:2px 2px 0 var(--gold-light);letter-spacing:4px;
+}
+.home-sub{font-size:14px;color:var(--ink-soft);margin:4px 0 0;font-weight:700}
+.home-divider{
+  display:flex;align-items:center;gap:10px;margin:16px 4px 14px;
+}
+.home-divider::before,.home-divider::after{
+  content:"";flex:1;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.home-divider span{font-size:12px;font-weight:800;color:var(--red);letter-spacing:3px}
+
+.level-card{
+  position:relative;
+  border-radius:16px;padding:18px;margin-bottom:14px;
+  color:#fff;width:100%;text-align:left;display:block;
+  border:2px solid var(--gold);
+  box-shadow:0 4px 12px rgba(139,0,0,.18);
+  overflow:hidden;
+}
+.level-card::before{
+  content:"";position:absolute;inset:4px;border:1px solid rgba(255,222,0,.4);
+  border-radius:12px;pointer-events:none;
+}
+.level-card[disabled]{opacity:1;background:#9a8a7a !important;border-color:#bbb;box-shadow:none}
+.level-card-head{display:flex;justify-content:space-between;align-items:center;position:relative}
+.level-card-tag{font-size:11px;font-weight:800;letter-spacing:2px;opacity:.95;text-transform:uppercase}
+.level-card-icon{font-size:20px}
+.level-card-cn{
+  font-family:"Noto Serif SC",serif;font-size:28px;font-weight:900;
+  margin:6px 0 0;letter-spacing:2px;
+}
+.level-card-title{font-size:18px;font-weight:800;margin:2px 0 0}
+.level-card-sub{font-size:13px;opacity:.92;margin:0 0 12px;font-weight:600}
+.lc-prog-bg{height:7px;background:rgba(0,0,0,.22);border-radius:4px;overflow:hidden}
+.lc-prog-fill{height:100%;background:var(--gold-bright);transition:width .3s}
+.lc-prog-label{font-size:12px;margin-top:6px;opacity:.95;font-weight:700}
+
+.home-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.home-action{
+  padding:14px 10px;background:#fff;border:2px solid var(--gold);border-radius:12px;
+  font-weight:800;color:var(--ink);text-align:center;font-size:13px;
+}
+.home-action .ha-icon{display:block;font-size:22px;margin-bottom:4px}
+
+/* ===== Level page ===== */
+.level-page{flex:1;display:flex;flex-direction:column;min-height:0}
+.level-header{
+  padding:16px 20px 24px;color:#fff;position:relative;
+  background-image:
+    radial-gradient(circle at 90% 20%, rgba(255,222,0,.15) 0, transparent 40%),
+    radial-gradient(circle at 10% 80%, rgba(255,255,255,.1) 0, transparent 40%);
+}
+.level-header h1{font-size:26px;font-weight:900;margin:0;letter-spacing:1px}
+.level-header .cn{font-family:"Noto Serif SC",serif;font-size:32px;margin:0 0 4px;letter-spacing:3px;opacity:.95}
+.level-header p{opacity:.92;font-size:13px;margin:2px 0 0;font-weight:600}
+.level-body{
+  flex:1;background:var(--cream);
+  border-top-left-radius:22px;border-top-right-radius:22px;
+  padding:18px 16px 40px;overflow-y:auto;
+  border-top:2px solid var(--gold);
+}
+.lesson-item{
+  display:flex;align-items:center;gap:14px;
+  background:#fff;padding:14px;border-radius:14px;
+  margin-bottom:10px;border:1.5px solid var(--paper-dark);width:100%;text-align:left;
+  transition:transform .15s;
+}
+.lesson-item:active{transform:scale(.98)}
+.lesson-item[disabled]{background:#f0e7d8;opacity:.6}
+.lesson-item.done{border-color:var(--jade);border-width:2px;background:#F0FBF8}
+.circle{
+  width:46px;height:46px;border-radius:23px;
+  background:var(--gold);color:#fff;font-weight:900;font-size:18px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  border:2px solid #fff;box-shadow:0 0 0 1.5px var(--gold);
+  font-family:"Noto Serif SC",serif;
+}
+.lesson-item.done .circle{background:var(--jade);box-shadow:0 0 0 1.5px var(--jade)}
+.lesson-item[disabled] .circle{background:#bbb;box-shadow:0 0 0 1.5px #aaa}
+.lesson-tag{color:var(--red);font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.lesson-name{color:var(--ink);font-size:16px;font-weight:800;margin-top:2px}
+.lesson-meta{color:var(--ink-soft);font-size:12px;margin-top:3px;font-weight:600}
+.lesson-types{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.type-chip{
+  font-size:10px;background:var(--paper);color:var(--ink-soft);
+  padding:2px 7px;border-radius:8px;font-weight:700;
+}
+
+/* ===== Lesson screen ===== */
+.lesson-page{flex:1;display:flex;flex-direction:column;min-height:0}
+.top-bar{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:#fff;border-bottom:2px solid var(--gold);
+}
+.close-btn{background:none;padding:4px;font-size:22px;color:var(--ink-soft)}
+.top-bar .progress-bg{flex:1;height:10px;background:var(--paper);border-radius:5px;overflow:hidden;border:1px solid var(--paper-dark)}
+.top-bar .progress-fill{height:100%;transition:width .3s;background:linear-gradient(90deg,var(--gold-bright),var(--gold))}
+.hearts-mini{display:flex;align-items:center;gap:3px;color:var(--red);font-weight:800;font-size:14px}
+
+.lesson-body{flex:1;padding:20px 18px;overflow-y:auto}
+
+/* Teach card */
+.teach-card{
+  position:relative;
+  background:#fff;border-radius:18px;padding:30px 24px;
+  display:flex;flex-direction:column;align-items:center;
+  border:2px solid var(--gold);margin-top:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+.teach-card::before{
+  content:"";position:absolute;inset:6px;border:1px dashed var(--paper-dark);border-radius:14px;pointer-events:none;
+}
+.teach-hanzi{
+  font-family:"Noto Serif SC",serif;
+  font-size:84px;font-weight:900;line-height:1.1;text-align:center;
+  color:var(--ink);position:relative;
+}
+.teach-pinyin{font-size:24px;color:var(--red);margin-top:8px;font-weight:700;letter-spacing:1px}
+.divider{width:60px;height:2px;background:var(--gold);margin:18px 0;border-radius:1px}
+.teach-label{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px;font-weight:800}
+.teach-pt{font-size:24px;font-weight:800;margin-top:8px;text-align:center;color:var(--ink)}
+.audio-btn{
+  margin-top:18px;
+  background:var(--red);color:#fff;padding:10px 18px;border-radius:999px;
+  font-weight:800;font-size:14px;display:inline-flex;align-items:center;gap:8px;
+  border:2px solid var(--gold);
+}
+.audio-btn:active{transform:scale(.96)}
+.audio-btn.small{margin:0;padding:6px 12px;font-size:12px}
+
+/* Quiz */
+.quiz-label{
+  font-size:12px;color:var(--red);text-transform:uppercase;
+  letter-spacing:2px;margin-bottom:10px;font-weight:800;text-align:center;
+}
+.prompt-box{
+  background:#fff;padding:24px 18px;border-radius:14px;
+  text-align:center;border:2px solid var(--gold);margin-bottom:18px;
+  position:relative;
+}
+.prompt-text{font-size:24px;font-weight:800;color:var(--ink)}
+.prompt-text.hanzi{font-family:"Noto Serif SC",serif;font-size:48px;font-weight:900}
+.prompt-pinyin{font-size:14px;color:var(--ink-soft);margin-top:6px;font-weight:600}
+.options{display:flex;flex-direction:column;gap:10px}
+.option{
+  padding:14px;border-radius:12px;border:2px solid var(--paper-dark);
+  background:#fff;text-align:center;width:100%;
+  transition:transform .12s;
+}
+.option:active{transform:scale(.98)}
+.option.selected{background:#FFF3D6;border-color:var(--gold)}
+.option.correct{background:#E8F8F2;border-color:var(--jade)}
+.option.wrong{background:#FDE8EA;border-color:var(--red)}
+.option-text{font-size:16px;font-weight:700;color:var(--ink)}
+.option-text.hanzi{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900}
+.option-pinyin{font-size:12px;color:var(--ink-soft);margin-top:4px;font-weight:600}
+
+/* Listen exercise */
+.listen-big{
+  background:#fff;border:2px solid var(--gold);border-radius:18px;
+  padding:40px 20px;text-align:center;margin-bottom:18px;
+}
+.listen-big .audio-btn{font-size:18px;padding:18px 28px}
+.listen-big-label{margin-top:14px;font-size:13px;color:var(--ink-soft);font-weight:700}
+
+/* Tone exercise */
+.tone-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tone-option{
+  padding:18px 8px;border-radius:12px;border:2px solid var(--paper-dark);
+  background:#fff;text-align:center;
+}
+.tone-option.selected{background:#FFF3D6;border-color:var(--gold)}
+.tone-option.correct{background:#E8F8F2;border-color:var(--jade)}
+.tone-option.wrong{background:#FDE8EA;border-color:var(--red)}
+.tone-num{font-size:30px;font-weight:900;color:var(--red);font-family:"Noto Serif SC",serif}
+.tone-desc{font-size:11px;color:var(--ink-soft);margin-top:4px;font-weight:700}
+.tone-mark{font-size:22px;color:var(--ink);margin-top:2px}
+
+/* Type pinyin */
+.type-input{
+  width:100%;padding:14px;font-size:18px;font-weight:700;text-align:center;
+  border:2px solid var(--paper-dark);border-radius:12px;background:#fff;color:var(--ink);
+  outline:none;
+}
+.type-input:focus{border-color:var(--gold)}
+.type-hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:8px;font-weight:600}
+
+/* Write/trace exercise */
+.write-stage{
+  position:relative;background:#fff;border:2px solid var(--gold);border-radius:18px;
+  padding:14px;margin-bottom:14px;
+}
+.write-canvas-wrap{
+  position:relative;width:100%;aspect-ratio:1;max-width:340px;margin:0 auto;
+  background:
+    linear-gradient(var(--paper-dark) 0 0) center/100% 1px no-repeat,
+    linear-gradient(90deg,var(--paper-dark) 0 0) center/1px 100% no-repeat,
+    linear-gradient(45deg,transparent 49.5%,var(--paper-dark) 49.5% 50.5%,transparent 50.5%) no-repeat,
+    linear-gradient(-45deg,transparent 49.5%,var(--paper-dark) 49.5% 50.5%,transparent 50.5%) no-repeat,
+    #FFFDF6;
+  border:2px dashed var(--red);border-radius:12px;
+}
+.write-hanzi-ghost{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:"Noto Serif SC",serif;font-weight:900;
+  color:rgba(200,16,46,.10);font-size:240px;line-height:1;pointer-events:none;
+  user-select:none;
+}
+.write-canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:10px;touch-action:none;cursor:crosshair}
+.write-pinyin{text-align:center;font-size:18px;color:var(--red);margin-top:10px;font-weight:700}
+.write-pt{text-align:center;font-size:14px;color:var(--ink-soft);margin-top:2px;font-weight:600}
+.write-tools{display:flex;gap:8px;margin-top:12px;justify-content:center}
+.tool-btn{
+  background:#fff;border:2px solid var(--gold);color:var(--ink);
+  padding:8px 16px;border-radius:999px;font-weight:800;font-size:13px;
+}
+
+/* Build sentence exercise */
+.build-target{
+  background:#fff;border:2px dashed var(--gold);border-radius:14px;
+  padding:14px;min-height:60px;display:flex;flex-wrap:wrap;gap:6px;
+  align-items:center;justify-content:center;margin-bottom:14px;
+}
+.build-slot{
+  padding:8px 12px;background:var(--paper);border-radius:10px;
+  font-family:"Noto Serif SC",serif;font-size:22px;font-weight:900;color:var(--ink);
+  border:1px solid var(--paper-dark);
+}
+.build-slot.empty{color:var(--paper-dark);background:transparent;border:1px dashed var(--paper-dark);min-width:36px;text-align:center}
+.build-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.build-word{
+  padding:10px 14px;background:#fff;border:2px solid var(--gold);border-radius:10px;
+  font-family:"Noto Serif SC",serif;font-size:22px;font-weight:900;color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.build-word:disabled{opacity:.25;cursor:default}
+.build-word .bw-pinyin{font-family:"ZCOOL XiaoWei",sans-serif;font-size:11px;color:var(--ink-soft);font-weight:600}
+
+/* Footer */
+.footer{
+  padding:16px;padding-bottom:max(env(safe-area-inset-bottom),16px);
+  background:#fff;border-top:2px solid var(--gold);
+}
+.btn-primary{
+  width:100%;padding:16px;border-radius:14px;
+  background:var(--red);color:#fff;font-weight:900;
+  font-size:16px;letter-spacing:1px;
+  border:2px solid var(--gold);
+  text-transform:uppercase;
+}
+.btn-primary[disabled]{background:#bbb;border-color:#999}
+.feedback{text-align:center;font-weight:800;margin-bottom:8px;font-size:15px}
+.feedback.ok{color:var(--jade)}
+.feedback.bad{color:var(--red)}
+
+/* End screens */
+.end-page{flex:1;display:flex;flex-direction:column}
+.end-body{
+  flex:1;padding:30px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;color:#fff;text-align:center;
+  position:relative;
+}
+.end-emoji{font-size:80px}
+.end-title{font-family:"Ma Shan Zheng",serif;font-size:38px;font-weight:900;margin-top:12px;letter-spacing:3px}
+.end-sub{font-size:14px;opacity:.95;margin-top:6px;font-weight:600}
+.end-stats{display:flex;gap:12px;margin-top:30px}
+.end-stat{
+  background:rgba(255,255,255,.18);padding:16px 14px;border-radius:14px;
+  min-width:90px;text-align:center;border:1.5px solid rgba(255,222,0,.5);
+}
+.end-stat-val{font-size:26px;font-weight:900;font-family:"Noto Serif SC",serif}
+.end-stat-lbl{font-size:11px;opacity:.95;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-top:2px}
+.new-badges{
+  margin-top:24px;background:#fff;padding:16px;border-radius:14px;
+  align-self:stretch;color:var(--ink);border:2px solid var(--gold);
+}
+.nb-title{font-weight:800;font-size:12px;color:var(--red);margin-bottom:10px;text-transform:uppercase;letter-spacing:2px}
+.nb-row{display:flex;align-items:center;gap:12px;padding:6px 0}
+.nb-icon{font-size:36px}
+.nb-name{font-size:16px;font-weight:800}
+.nb-desc{font-size:13px;color:var(--ink-soft)}
+.btn-end{
+  width:100%;padding:16px;border-radius:14px;
+  background:#fff;color:var(--red);font-weight:900;font-size:16px;
+  border:2px solid var(--gold);text-transform:uppercase;letter-spacing:1px;
+}
+.btn-exit{display:block;width:100%;padding:12px;text-align:center;background:none;color:#fff;font-weight:700;margin-top:6px}
+
+/* Badges / progress page */
+.badges-page{padding:16px;padding-bottom:40px;flex:1;overflow-y:auto}
+.badges-page h1{font-family:"Ma Shan Zheng",serif;font-size:32px;font-weight:900;margin:0;color:var(--red);letter-spacing:2px}
+.badges-page .sub{font-size:13px;color:var(--ink-soft);margin:0 0 16px;font-weight:600}
+.stats-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.stat-card{
+  flex:1;min-width:90px;background:#fff;padding:14px 8px;border-radius:12px;
+  text-align:center;border:2px solid var(--gold);
+}
+.stat-val{font-size:24px;font-weight:900;color:var(--red);font-family:"Noto Serif SC",serif}
+.stat-lbl{font-size:10px;color:var(--ink-soft);text-transform:uppercase;margin-top:2px;font-weight:800;letter-spacing:1px}
+.badge-row{
+  display:flex;align-items:center;gap:14px;
+  background:#fff;padding:14px;border-radius:14px;
+  margin-bottom:10px;border:1.5px solid var(--paper-dark);
+}
+.badge-row.unlocked{border-color:var(--gold);background:linear-gradient(180deg,#fff 0%,#FFFAE6 100%)}
+.badge-row.locked{opacity:.45}
+.badge-icon{font-size:36px}
+.badge-title{font-size:15px;font-weight:800;color:var(--ink)}
+.badge-desc{font-size:12px;color:var(--ink-soft);font-weight:600;margin-top:2px}
+.reset-btn{
+  width:100%;margin-top:30px;padding:14px;background:none;
+  border:2px solid var(--red);color:var(--red);border-radius:12px;
+  font-weight:800;letter-spacing:1px;
+}
+.back-btn{background:none;padding:8px 12px;color:var(--red);font-weight:800;font-size:14px}
+.page-header{display:flex;align-items:center;padding:8px 8px 0}
+
+/* Vocab review page */
+.vocab-list-item{
+  display:flex;align-items:center;gap:14px;
+  background:#fff;padding:12px 14px;border-radius:12px;
+  margin-bottom:8px;border:1.5px solid var(--paper-dark);
+}
+.vli-hanzi{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:900;min-width:54px}
+.vli-info{flex:1}
+.vli-pinyin{font-size:13px;color:var(--red);font-weight:700}
+.vli-pt{font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:2px}
+
+/* ===== Chat (AI conversation) ===== */
+.chat-page{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--cream)}
+.chat-top{
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:#fff;border-bottom:2px solid var(--gold);
+}
+.chat-top .title{flex:1;font-weight:800;color:var(--red);font-family:"Ma Shan Zheng",serif;font-size:22px;letter-spacing:2px}
+.chat-top .top-icon{
+  background:var(--paper);border:1.5px solid var(--gold);
+  width:36px;height:36px;border-radius:18px;font-size:16px;
+  display:flex;align-items:center;justify-content:center;color:var(--ink)
+}
+.chat-body{flex:1;overflow-y:auto;padding:14px;padding-bottom:20px;display:flex;flex-direction:column;gap:10px}
+.chat-empty{
+  text-align:center;color:var(--ink-soft);padding:30px 20px;
+}
+.chat-empty .ce-icon{font-size:54px}
+.chat-empty .ce-title{font-family:"Ma Shan Zheng",serif;font-size:28px;color:var(--red);margin:8px 0 4px;letter-spacing:2px}
+.chat-empty .ce-sub{font-size:13px;font-weight:600;line-height:1.5;max-width:280px;margin:6px auto 16px}
+.chat-empty .ce-cta{
+  display:inline-block;padding:12px 22px;background:var(--red);color:#fff;
+  border:2px solid var(--gold);border-radius:999px;font-weight:800;letter-spacing:1px;
+}
+.bubble{
+  max-width:86%;padding:12px 14px;border-radius:16px;
+  font-size:15px;line-height:1.45;font-weight:600;
+}
+.bubble.user{
+  align-self:flex-end;background:var(--red);color:#fff;
+  border:2px solid var(--gold);border-bottom-right-radius:6px;
+}
+.bubble.ai{
+  align-self:flex-start;background:#fff;color:var(--ink);
+  border:2px solid var(--gold);border-bottom-left-radius:6px;
+}
+.bubble.ai .b-hanzi{
+  font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;
+  color:var(--ink);line-height:1.35;
+}
+.bubble.ai .b-pinyin{font-size:13px;color:var(--red);font-weight:700;margin-top:4px}
+.bubble.ai .b-pt{font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:4px;border-top:1px dashed var(--paper-dark);padding-top:6px}
+.bubble.ai .b-audio{
+  margin-top:8px;background:var(--paper);border:1.5px solid var(--gold);
+  padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;color:var(--ink);
+  display:inline-flex;align-items:center;gap:4px;
+}
+.b-card{
+  align-self:flex-start;max-width:86%;background:#FFFAE6;
+  border:1.5px solid var(--gold);border-left:4px solid var(--red);
+  padding:10px 12px;border-radius:12px;font-size:13px;
+}
+.b-card.suggest{background:#F0FBF8;border-left-color:var(--jade)}
+.b-card-title{font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.b-card.suggest .b-card-title{color:var(--jade)}
+.b-corr-row{margin-bottom:6px;padding-bottom:6px;border-bottom:1px dashed var(--paper-dark)}
+.b-corr-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.b-corr-fix{font-family:"Noto Serif SC",serif;font-weight:900;color:var(--jade);font-size:16px}
+.b-corr-orig{font-family:"Noto Serif SC",serif;color:var(--red);text-decoration:line-through;opacity:.75;margin-right:6px}
+.b-corr-expl{font-size:12px;color:var(--ink-soft);font-weight:600;margin-top:4px;line-height:1.4}
+.b-sug-row{font-family:"Noto Serif SC",serif;font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.b-sug-row:last-child{margin-bottom:0}
+.b-thinking{
+  align-self:flex-start;color:var(--ink-soft);font-size:13px;font-weight:700;
+  background:var(--paper);padding:8px 14px;border-radius:16px;border:1.5px dashed var(--gold);
+}
+.chat-input-wrap{
+  padding:10px 12px;padding-bottom:max(env(safe-area-inset-bottom),10px);
+  background:#fff;border-top:2px solid var(--gold);
+  display:flex;gap:8px;align-items:flex-end;
+}
+.chat-input{
+  flex:1;background:var(--cream);border:1.5px solid var(--paper-dark);
+  border-radius:18px;padding:10px 14px;font-size:15px;color:var(--ink);
+  font-family:inherit;font-weight:600;resize:none;max-height:120px;outline:none;
+}
+.chat-input:focus{border-color:var(--gold)}
+.chat-send{
+  background:var(--red);color:#fff;border:2px solid var(--gold);
+  width:44px;height:44px;border-radius:22px;font-size:20px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.chat-send[disabled]{background:#bbb;border-color:#999}
+.stt-mic{
+  background:var(--paper);color:var(--ink);border:2px solid var(--gold);
+  width:44px;height:44px;border-radius:22px;font-size:20px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  position:relative;
+}
+.stt-mic.listening{
+  background:var(--red);color:#fff;animation:micPulse 1s ease-in-out infinite;
+}
+@keyframes micPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(200,16,46,.5)}
+  50%{box-shadow:0 0 0 8px rgba(200,16,46,0)}
+}
+.stt-lang{
+  background:#fff;color:var(--red);border:2px solid var(--gold);
+  height:44px;border-radius:22px;padding:0 10px;font-size:12px;font-weight:900;
+  letter-spacing:1px;flex-shrink:0;display:flex;align-items:center;gap:3px;
+}
+.stt-lang .cn{font-family:"Noto Serif SC",serif;font-size:16px;font-weight:900}
+.stt-banner{
+  background:#FDE8EA;border:1.5px solid var(--red);color:var(--red);
+  padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;
+  margin:0 12px;text-align:center;
+}
+
+/* Chat settings modal */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:18px;
+}
+.modal{
+  background:#fff;border-radius:18px;border:2px solid var(--gold);
+  width:100%;max-width:420px;max-height:90vh;overflow-y:auto;
+  padding:20px;
+}
+.modal h2{font-family:"Ma Shan Zheng",serif;color:var(--red);font-size:26px;margin:0 0 4px;letter-spacing:2px}
+.modal .modal-sub{font-size:12px;color:var(--ink-soft);font-weight:600;margin:0 0 14px}
+.modal label{display:block;font-size:12px;font-weight:800;color:var(--ink);margin:12px 0 6px;letter-spacing:1px;text-transform:uppercase}
+.modal input[type=text],.modal input[type=password],.modal select{
+  width:100%;background:var(--cream);border:1.5px solid var(--paper-dark);
+  border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;font-weight:600;color:var(--ink);
+  outline:none;
+}
+.modal input:focus,.modal select:focus{border-color:var(--gold)}
+.modal .hint{font-size:11px;color:var(--ink-soft);margin-top:4px;line-height:1.4}
+.modal .hint a{color:var(--red);font-weight:700}
+.modal .modal-actions{display:flex;gap:8px;margin-top:18px}
+.modal .modal-actions button{flex:1;padding:12px;border-radius:10px;font-weight:800;font-size:14px;border:2px solid var(--gold)}
+.modal .btn-save{background:var(--red);color:#fff}
+.modal .btn-cancel{background:#fff;color:var(--ink)}
+.modal .btn-danger{background:#fff;color:var(--red);border-color:var(--red)}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   VOCABULÁRIO — ~180 itens cobrindo HSK 1-3 essencial
+   ============================================================ */
+const V = {};
+const v = (id,hanzi,pinyin,pt,tones)=>{ V[id]={hanzi,pinyin,pt,tones:tones||null}; };
+
+// Saudações e cortesia
+v('ni_hao','你好','nǐ hǎo','olá');
+v('zaijian','再见','zàijiàn','tchau');
+v('xiexie','谢谢','xièxie','obrigado');
+v('bukeqi','不客气','bú kèqi','de nada');
+v('duibuqi','对不起','duìbuqǐ','desculpa');
+v('meiguanxi','没关系','méi guānxi','tudo bem');
+v('qing','请','qǐng','por favor',[3]);
+v('zaoshanghao','早上好','zǎoshang hǎo','bom dia');
+v('xiawuhao','下午好','xiàwǔ hǎo','boa tarde');
+v('wanshanghao','晚上好','wǎnshang hǎo','boa noite (saudação)');
+v('wanan','晚安','wǎn\'ān','boa noite (dormir)');
+v('huanyingguanglin','欢迎光临','huānyíng guānglín','bem-vindo');
+// Sim/não, partículas
+v('shi','是','shì','sim/é',[4]);
+v('bu','不','bù','não',[4]);
+v('dui','对','duì','correto',[4]);
+v('hao','好','hǎo','bom',[3]);
+v('keyi','可以','kěyǐ','pode');
+v('youdianr','有点儿','yǒudiǎnr','um pouco');
+v('feichang','非常','fēicháng','muito');
+v('hen','很','hěn','muito',[3]);
+v('ye','也','yě','também',[3]);
+v('dou','都','dōu','todos',[1]);
+// Pronomes
+v('wo','我','wǒ','eu',[3]);
+v('ni','你','nǐ','você',[3]);
+v('nin','您','nín','você (formal)',[2]);
+v('ta_he','他','tā','ele',[1]);
+v('ta_she','她','tā','ela',[1]);
+v('women','我们','wǒmen','nós');
+v('nimen','你们','nǐmen','vocês');
+v('tamen','他们','tāmen','eles');
+v('zheige','这个','zhège','isto');
+v('neige','那个','nàge','aquilo');
+// Números
+v('yi','一','yī','um',[1]);
+v('er','二','èr','dois',[4]);
+v('san','三','sān','três',[1]);
+v('si','四','sì','quatro',[4]);
+v('wu','五','wǔ','cinco',[3]);
+v('liu','六','liù','seis',[4]);
+v('qi','七','qī','sete',[1]);
+v('ba','八','bā','oito',[1]);
+v('jiu','九','jiǔ','nove',[3]);
+v('shi_num','十','shí','dez',[2]);
+v('bai','百','bǎi','cem',[3]);
+v('qian','千','qiān','mil',[1]);
+v('wan','万','wàn','dez mil',[4]);
+v('lingsui','零','líng','zero',[2]);
+// Família e pessoas
+v('baba','爸爸','bàba','pai');
+v('mama','妈妈','māma','mãe');
+v('gege','哥哥','gēge','irmão mais velho');
+v('jiejie','姐姐','jiějie','irmã mais velha');
+v('didi','弟弟','dìdi','irmão mais novo');
+v('meimei','妹妹','mèimei','irmã mais nova');
+v('yeye','爷爷','yéye','avô');
+v('nainai','奶奶','nǎinai','avó');
+v('erzi','儿子','érzi','filho');
+v('nver','女儿','nǚ\'ér','filha');
+v('pengyou','朋友','péngyou','amigo');
+v('laoshi','老师','lǎoshī','professor');
+v('xuesheng','学生','xuéshēng','estudante');
+v('ren','人','rén','pessoa',[2]);
+// Frases de apresentação
+v('woaini','我爱你','wǒ ài nǐ','eu te amo');
+v('nihaoma','你好吗？','nǐ hǎo ma?','como vai?');
+v('wohenhao','我很好','wǒ hěn hǎo','estou bem');
+v('nijiao','你叫什么名字？','nǐ jiào shénme míngzi?','qual seu nome?');
+v('wojiao','我叫…','wǒ jiào…','meu nome é…');
+v('baxiren','我是巴西人','wǒ shì bāxī rén','sou brasileiro(a)');
+v('jianmiankuaile','见面快乐','jiànmiàn kuàilè','prazer em conhecer');
+// Sobrevivência
+v('wo_e','我饿了','wǒ è le','estou com fome');
+v('wo_ke','我渴了','wǒ kě le','estou com sede');
+v('duoshao','多少钱？','duōshǎo qián?','quanto custa?');
+v('woxihuan','我喜欢','wǒ xǐhuān','eu gosto');
+v('meiwenti','没问题','méi wèntí','sem problema');
+v('tingbudong','听不懂','tīng bù dǒng','não entendo (ouvindo)');
+v('bumingbai','不明白','bù míngbai','não compreendo');
+v('qingbangwo','请帮我','qǐng bāng wǒ','por favor me ajude');
+v('zaishuoyibian','再说一遍','zài shuō yí biàn','repita por favor');
+v('mannidian','慢一点','màn yìdiǎn','mais devagar');
+// Comida e bebida
+v('chi','吃','chī','comer',[1]);
+v('he','喝','hē','beber',[1]);
+v('mifan','米饭','mǐfàn','arroz');
+v('mian','面条','miàntiáo','macarrão');
+v('jiaozi','饺子','jiǎozi','jiaozi');
+v('baozi','包子','bāozi','baozi');
+v('rou','肉','ròu','carne',[4]);
+v('niurou','牛肉','niúròu','carne bovina');
+v('jirou','鸡肉','jīròu','frango');
+v('yu','鱼','yú','peixe',[2]);
+v('shucai','蔬菜','shūcài','vegetais');
+v('shuiguo','水果','shuǐguǒ','frutas');
+v('pingguo','苹果','píngguǒ','maçã');
+v('xiangjiao','香蕉','xiāngjiāo','banana');
+v('mianbao','面包','miànbāo','pão');
+v('dan','鸡蛋','jīdàn','ovo');
+v('shui','水','shuǐ','água',[3]);
+v('cha','茶','chá','chá',[2]);
+v('kafei','咖啡','kāfēi','café');
+v('niunai','牛奶','niúnǎi','leite');
+v('pijiu','啤酒','píjiǔ','cerveja');
+v('haochi','好吃','hǎochī','gostoso');
+v('haohe','好喝','hǎohē','gostoso (de beber)');
+// Tempo e datas
+v('jintian','今天','jīntiān','hoje');
+v('mingtian','明天','míngtiān','amanhã');
+v('zuotian','昨天','zuótiān','ontem');
+v('xianzai','现在','xiànzài','agora');
+v('zaoshang','早上','zǎoshang','manhã');
+v('zhongwu','中午','zhōngwǔ','meio-dia');
+v('xiawu','下午','xiàwǔ','tarde');
+v('wanshang','晚上','wǎnshang','noite');
+v('xingqi','星期','xīngqī','semana');
+v('xingqiyi','星期一','xīngqīyī','segunda-feira');
+v('xingqier','星期二','xīngqī\'èr','terça-feira');
+v('xingqisan','星期三','xīngqīsān','quarta-feira');
+v('xingqisi','星期四','xīngqīsì','quinta-feira');
+v('xingqiwu','星期五','xīngqīwǔ','sexta-feira');
+v('xingqiliu','星期六','xīngqīliù','sábado');
+v('xingqitian','星期天','xīngqītiān','domingo');
+v('yue','月','yuè','mês',[4]);
+v('nian','年','nián','ano',[2]);
+v('xiaoshi','小时','xiǎoshí','hora');
+v('fenzhong','分钟','fēnzhōng','minuto');
+// Cores e descrições
+v('hongse','红色','hóngsè','vermelho');
+v('huangse','黄色','huángsè','amarelo');
+v('lanse','蓝色','lánsè','azul');
+v('lvse','绿色','lǜsè','verde');
+v('baise','白色','báisè','branco');
+v('heise','黑色','hēisè','preto');
+v('da','大','dà','grande',[4]);
+v('xiao','小','xiǎo','pequeno',[3]);
+v('xin','新','xīn','novo',[1]);
+v('jiu_old','旧','jiù','velho',[4]);
+v('changadj','长','cháng','longo',[2]);
+v('duan','短','duǎn','curto',[3]);
+v('gaoxing','高兴','gāoxìng','feliz');
+v('nanguo','难过','nánguò','triste');
+// Corpo e saúde
+v('tou','头','tóu','cabeça',[2]);
+v('yanjing','眼睛','yǎnjing','olhos');
+v('bizi','鼻子','bízi','nariz');
+v('zui','嘴','zuǐ','boca',[3]);
+v('erduo','耳朵','ěrduo','orelhas');
+v('shou','手','shǒu','mão',[3]);
+v('jiao','脚','jiǎo','pé',[3]);
+v('shenti','身体','shēntǐ','corpo');
+v('bingle','病了','bìng le','estou doente');
+v('yisheng','医生','yīshēng','médico');
+v('yiyuan','医院','yīyuàn','hospital');
+v('yao','药','yào','remédio',[4]);
+// Compras
+v('mai','买','mǎi','comprar',[3]);
+v('mai_sell','卖','mài','vender',[4]);
+v('gui','贵','guì','caro',[4]);
+v('pianyi','便宜','piányi','barato');
+v('kuai','块','kuài','yuan (coloq.)',[4]);
+v('yuan','元','yuán','yuan',[2]);
+v('shangdian','商店','shāngdiàn','loja');
+v('shichang','市场','shìchǎng','mercado');
+v('yao_want','要','yào','querer',[4]);
+v('buyao','不要','bú yào','não quero');
+// Viagem e direções
+v('qu','去','qù','ir',[4]);
+v('lai','来','lái','vir',[2]);
+v('zheli','这里','zhèlǐ','aqui');
+v('nali','那里','nàlǐ','ali');
+v('zuo','左','zuǒ','esquerda',[3]);
+v('you','右','yòu','direita',[4]);
+v('qian_front','前','qián','frente',[2]);
+v('hou','后','hòu','atrás',[4]);
+v('shang','上','shàng','em cima',[4]);
+v('xia','下','xià','embaixo',[4]);
+v('ditie','地铁','dìtiě','metrô');
+v('gongche','公车','gōngchē','ônibus');
+v('chuzu','出租车','chūzūchē','táxi');
+v('jichang','机场','jīchǎng','aeroporto');
+v('huoche','火车站','huǒchēzhàn','estação de trem');
+// Trabalho e estudo
+v('gongzuo','工作','gōngzuò','trabalho');
+v('xuexi','学习','xuéxí','estudar');
+v('gongsi','公司','gōngsī','empresa');
+v('bangongshi','办公室','bàngōngshì','escritório');
+v('shu','书','shū','livro',[1]);
+v('bi','笔','bǐ','caneta',[3]);
+v('diannao','电脑','diànnǎo','computador');
+v('shouji','手机','shǒujī','celular');
+v('xuexiao','学校','xuéxiào','escola');
+v('daxue','大学','dàxué','universidade');
+// Emoções e verbos comuns
+v('kan','看','kàn','ver/olhar',[4]);
+v('ting','听','tīng','ouvir',[1]);
+v('shuo','说','shuō','falar',[1]);
+v('du','读','dú','ler',[2]);
+v('xie','写','xiě','escrever',[3]);
+v('zuo','做','zuò','fazer',[4]);
+v('shui','睡','shuì','dormir',[4]);
+v('zou','走','zǒu','andar',[3]);
+v('zai','在','zài','estar em',[4]);
+v('lei','累','lèi','cansado',[4]);
+v('mang','忙','máng','ocupado',[2]);
+v('kaixin','开心','kāixīn','alegre');
+v('shengqi','生气','shēngqì','irritado');
+// Palavras-chave de pergunta
+v('shenme','什么','shénme','o quê');
+v('shei','谁','shéi','quem',[2]);
+v('nalia','哪里','nǎlǐ','onde');
+v('shenmeshihou','什么时候','shénme shíhou','quando');
+v('weishenme','为什么','wèishénme','por quê');
+v('zenme','怎么','zěnme','como');
+v('jige','几个','jǐgè','quantos');
+// Frases avançadas
+v('xianghexianle','现在几点','xiànzài jǐ diǎn','que horas são');
+v('wozhuzai','我住在','wǒ zhù zài','eu moro em');
+v('wozaixue','我在学中文','wǒ zài xué zhōngwén','estou aprendendo chinês');
+v('zhongguo','中国','zhōngguó','China');
+v('baxi','巴西','bāxī','Brasil');
+v('shijie','世界','shìjiè','mundo');
+v('jiantingdong','简单','jiǎndān','simples/fácil');
+v('nan','难','nán','difícil',[2]);
+v('wojuede','我觉得','wǒ juéde','eu acho que');
+v('keneng','可能','kěnéng','talvez');
+v('yiding','一定','yídìng','com certeza');
+
+/* ============================================================
+   CONSTRUTORES DE EXERCÍCIOS
+   ============================================================ */
+const teach = (id)=>({type:'teach',vocabId:id});
+const quizPt = (id,ds)=>({type:'quiz',prompt:'pt',answer:'hanzi',vocabId:id,distractors:ds});
+const quizHanzi = (id,ds)=>({type:'quiz',prompt:'hanzi',answer:'pt',vocabId:id,distractors:ds});
+const quizPinyin = (id,ds)=>({type:'quiz',prompt:'hanzi',answer:'pinyin',vocabId:id,distractors:ds});
+const listen = (id,ds)=>({type:'listen',vocabId:id,distractors:ds});
+const listenPt = (id,ds)=>({type:'listenPt',vocabId:id,distractors:ds});
+const tone = (id)=>({type:'tone',vocabId:id});
+const typeP = (id)=>({type:'typePinyin',vocabId:id});
+const write = (id)=>({type:'write',vocabId:id});
+const build = (id,parts,ds)=>({type:'build',vocabId:id,parts,distractors:ds});
+
+/* ============================================================
+   NÍVEIS — 10 níveis com lições progressivas
+   ============================================================ */
+const LEVELS = [
+  {
+    id:1,title:'Fundamentos',cn:'入门',subtitle:'Cumprimentos e pronomes',color:'#C8102E',
+    lessons:[
+      { id:'1-1',title:'Olá! 你好',teaches:['ni_hao','zaijian','xiexie','bukeqi'],
+        exercises:[
+          teach('ni_hao'),listen('ni_hao',['zaijian','xiexie']),
+          teach('zaijian'),tone('zaijian'),
+          quizPt('ni_hao',['zaijian','xiexie']),quizHanzi('zaijian',['ni_hao','bukeqi']),
+          teach('xiexie'),write('xiexie'),
+          teach('bukeqi'),listen('bukeqi',['xiexie','ni_hao']),
+          quizPt('xiexie',['bukeqi','ni_hao']),quizPinyin('bukeqi',['xiexie','zaijian']),
+        ]},
+      { id:'1-2',title:'Sim, não e desculpas',teaches:['shi','bu','dui','duibuqi','meiguanxi'],
+        exercises:[
+          teach('shi'),teach('bu'),tone('shi'),tone('bu'),
+          teach('dui'),listen('dui',['shi','bu']),
+          teach('duibuqi'),teach('meiguanxi'),
+          quizPt('shi',['bu','duibuqi']),quizHanzi('bu',['shi','dui']),
+          typeP('shi'),typeP('bu'),
+          quizPt('duibuqi',['meiguanxi','xiexie']),quizPt('meiguanxi',['bukeqi','duibuqi']),
+        ]},
+      { id:'1-3',title:'Pronomes',teaches:['wo','ni','nin','ta_he','ta_she','women','nimen','tamen'],
+        exercises:[
+          teach('wo'),tone('wo'),write('wo'),
+          teach('ni'),tone('ni'),write('ni'),
+          quizPt('wo',['ni','ta_he']),listen('wo',['ni','women']),
+          teach('nin'),teach('ta_he'),teach('ta_she'),
+          quizHanzi('ta_he',['ta_she','wo']),listen('ta_she',['ta_he','wo']),
+          teach('women'),teach('nimen'),teach('tamen'),
+          quizPt('women',['wo','nimen']),quizPt('tamen',['nimen','women']),
+        ]},
+      { id:'1-4',title:'Saudações do dia',teaches:['zaoshanghao','xiawuhao','wanshanghao','wanan','huanyingguanglin'],
+        exercises:[
+          teach('zaoshanghao'),teach('xiawuhao'),teach('wanshanghao'),teach('wanan'),
+          quizPt('zaoshanghao',['xiawuhao','wanan']),quizPt('xiawuhao',['zaoshanghao','wanshanghao']),
+          listen('wanshanghao',['xiawuhao','zaoshanghao']),listen('wanan',['ni_hao','zaijian']),
+          teach('huanyingguanglin'),quizPt('huanyingguanglin',['zaoshanghao','xiexie']),
+          build('woaini',['我','爱','你'],['他','是']),
+        ]},
+    ],
+  },
+  {
+    id:2,title:'Números',cn:'数字',subtitle:'De 0 a 10000',color:'#D4AF37',
+    lessons:[
+      { id:'2-1',title:'Números 1–5',teaches:['yi','er','san','si','wu'],
+        exercises:[
+          teach('yi'),write('yi'),teach('er'),write('er'),teach('san'),write('san'),
+          tone('yi'),tone('er'),tone('san'),
+          quizPt('yi',['er','san']),listen('san',['yi','er']),
+          teach('si'),teach('wu'),tone('si'),tone('wu'),
+          quizPt('si',['wu','san']),quizHanzi('wu',['si','er']),
+          typeP('san'),typeP('wu'),
+        ]},
+      { id:'2-2',title:'Números 6–10',teaches:['liu','qi','ba','jiu','shi_num'],
+        exercises:[
+          teach('liu'),teach('qi'),teach('ba'),
+          quizPt('liu',['qi','ba']),listen('ba',['liu','qi']),
+          teach('jiu'),teach('shi_num'),tone('jiu'),
+          quizPt('jiu',['shi_num','ba']),quizHanzi('shi_num',['jiu','qi']),
+          write('shi_num'),quizPinyin('liu',['jiu','ba']),
+        ]},
+      { id:'2-3',title:'Cem, mil, dez mil',teaches:['lingsui','bai','qian','wan'],
+        exercises:[
+          teach('lingsui'),teach('bai'),teach('qian'),teach('wan'),
+          tone('bai'),tone('qian'),tone('wan'),
+          listen('bai',['qian','wan']),listen('qian',['wan','bai']),
+          quizPt('bai',['qian','wan']),quizPt('wan',['qian','bai']),
+          typeP('bai'),typeP('qian'),
+        ]},
+    ],
+  },
+  {
+    id:3,title:'Família',cn:'家人',subtitle:'Pessoas próximas',color:'#2A9D8F',
+    lessons:[
+      { id:'3-1',title:'Pais e irmãos',teaches:['baba','mama','gege','jiejie','didi','meimei'],
+        exercises:[
+          teach('baba'),teach('mama'),listen('baba',['mama','gege']),listen('mama',['baba','jiejie']),
+          quizPt('baba',['mama','gege']),quizHanzi('mama',['baba','jiejie']),
+          teach('gege'),teach('jiejie'),teach('didi'),teach('meimei'),
+          quizPt('gege',['didi','jiejie']),quizPt('jiejie',['meimei','gege']),
+          quizPt('didi',['gege','meimei']),quizPt('meimei',['didi','jiejie']),
+          tone('gege'),
+        ]},
+      { id:'3-2',title:'Avós e filhos',teaches:['yeye','nainai','erzi','nver','ren'],
+        exercises:[
+          teach('yeye'),teach('nainai'),teach('erzi'),teach('nver'),teach('ren'),
+          quizPt('yeye',['nainai','baba']),quizPt('nainai',['yeye','mama']),
+          listen('erzi',['nver','ren']),quizHanzi('nver',['erzi','meimei']),
+          write('ren'),quizPt('ren',['xuesheng','laoshi']),
+        ]},
+      { id:'3-3',title:'Amigos e escola',teaches:['pengyou','laoshi','xuesheng'],
+        exercises:[
+          teach('pengyou'),teach('laoshi'),teach('xuesheng'),
+          quizPt('pengyou',['laoshi','xuesheng']),quizPt('laoshi',['xuesheng','pengyou']),
+          listen('laoshi',['xuesheng','pengyou']),listen('xuesheng',['laoshi','pengyou']),
+          quizHanzi('pengyou',['laoshi','xuesheng']),
+        ]},
+    ],
+  },
+  {
+    id:4,title:'Dia a dia',cn:'日常会话',subtitle:'Conversação básica',color:'#E63946',
+    lessons:[
+      { id:'4-1',title:'Apresentando-se',teaches:['nihaoma','wohenhao','nijiao','wojiao','baxiren'],
+        exercises:[
+          teach('nihaoma'),teach('wohenhao'),
+          quizPt('nihaoma',['wohenhao','wojiao']),listen('wohenhao',['nihaoma','baxiren']),
+          teach('nijiao'),teach('wojiao'),
+          quizPt('nijiao',['wojiao','nihaoma']),quizHanzi('wojiao',['nijiao','wohenhao']),
+          teach('baxiren'),quizPt('baxiren',['wojiao','wohenhao']),
+          build('wohenhao',['我','很','好'],['你','是']),
+        ]},
+      { id:'4-2',title:'Sobrevivência',teaches:['wo_e','wo_ke','woxihuan','meiwenti','tingbudong','qingbangwo'],
+        exercises:[
+          teach('wo_e'),teach('wo_ke'),
+          quizPt('wo_e',['wo_ke','woxihuan']),listen('wo_ke',['wo_e','meiwenti']),
+          teach('woxihuan'),teach('meiwenti'),
+          quizPt('meiwenti',['woxihuan','wohenhao']),
+          teach('tingbudong'),teach('qingbangwo'),
+          quizPt('tingbudong',['qingbangwo','meiwenti']),quizHanzi('qingbangwo',['tingbudong','meiwenti']),
+          typeP('hen'),typeP('hao'),
+        ]},
+      { id:'4-3',title:'Pedidos comuns',teaches:['zaishuoyibian','mannidian','qing','duoshao'],
+        exercises:[
+          teach('qing'),teach('duoshao'),
+          tone('qing'),listen('duoshao',['zaishuoyibian','qing']),
+          teach('zaishuoyibian'),teach('mannidian'),
+          quizPt('zaishuoyibian',['mannidian','qingbangwo']),
+          quizPt('mannidian',['zaishuoyibian','duoshao']),
+          quizPt('duoshao',['mannidian','meiwenti']),
+        ]},
+    ],
+  },
+  {
+    id:5,title:'Comida',cn:'食物',subtitle:'Coma e beba em mandarim',color:'#F4A261',
+    lessons:[
+      { id:'5-1',title:'Comer e beber',teaches:['chi','he','shui','cha','kafei','niunai'],
+        exercises:[
+          teach('chi'),tone('chi'),write('chi'),
+          teach('he'),tone('he'),
+          teach('shui'),teach('cha'),teach('kafei'),teach('niunai'),
+          listen('cha',['shui','kafei']),listen('kafei',['niunai','cha']),
+          quizPt('chi',['he','kafei']),quizPt('he',['chi','cha']),
+          quizHanzi('cha',['kafei','shui']),
+          build('woxihuan',['我','喜欢'],['不','也']),
+        ]},
+      { id:'5-2',title:'Pratos típicos',teaches:['mifan','mian','jiaozi','baozi','mianbao','dan'],
+        exercises:[
+          teach('mifan'),teach('mian'),teach('jiaozi'),teach('baozi'),
+          quizPt('mifan',['mian','jiaozi']),quizPt('jiaozi',['baozi','mifan']),
+          listen('jiaozi',['baozi','mian']),
+          teach('mianbao'),teach('dan'),
+          quizPt('mianbao',['dan','mifan']),quizPt('dan',['mianbao','mian']),
+        ]},
+      { id:'5-3',title:'Carne, frutas e vegetais',teaches:['rou','niurou','jirou','yu','shucai','shuiguo','pingguo','xiangjiao','pijiu','haochi','haohe'],
+        exercises:[
+          teach('rou'),teach('niurou'),teach('jirou'),teach('yu'),
+          quizPt('niurou',['jirou','yu']),listen('yu',['niurou','jirou']),
+          teach('shucai'),teach('shuiguo'),teach('pingguo'),teach('xiangjiao'),
+          quizPt('pingguo',['xiangjiao','shucai']),
+          teach('pijiu'),teach('haochi'),teach('haohe'),
+          quizPt('haochi',['haohe','pijiu']),
+        ]},
+    ],
+  },
+  {
+    id:6,title:'Tempo',cn:'时间',subtitle:'Horas, dias e meses',color:'#3D5A80',
+    lessons:[
+      { id:'6-1',title:'Hoje, amanhã, ontem',teaches:['jintian','mingtian','zuotian','xianzai'],
+        exercises:[
+          teach('jintian'),teach('mingtian'),teach('zuotian'),teach('xianzai'),
+          quizPt('jintian',['mingtian','zuotian']),quizPt('mingtian',['jintian','xianzai']),
+          listen('zuotian',['jintian','mingtian']),listen('xianzai',['jintian','zuotian']),
+          quizHanzi('xianzai',['jintian','mingtian']),
+        ]},
+      { id:'6-2',title:'Períodos do dia',teaches:['zaoshang','zhongwu','xiawu','wanshang'],
+        exercises:[
+          teach('zaoshang'),teach('zhongwu'),teach('xiawu'),teach('wanshang'),
+          quizPt('zaoshang',['zhongwu','wanshang']),quizPt('xiawu',['zhongwu','zaoshang']),
+          listen('xiawu',['zaoshang','wanshang']),listen('zhongwu',['zaoshang','xiawu']),
+          build('xianghexianle',['现在','几','点'],['是','我']),
+        ]},
+      { id:'6-3',title:'Dias da semana',teaches:['xingqi','xingqiyi','xingqier','xingqisan','xingqisi','xingqiwu','xingqiliu','xingqitian'],
+        exercises:[
+          teach('xingqi'),teach('xingqiyi'),teach('xingqier'),teach('xingqisan'),
+          quizPt('xingqiyi',['xingqier','xingqisan']),quizPt('xingqisan',['xingqiwu','xingqiyi']),
+          teach('xingqisi'),teach('xingqiwu'),teach('xingqiliu'),teach('xingqitian'),
+          quizPt('xingqiwu',['xingqiliu','xingqitian']),quizPt('xingqitian',['xingqiwu','xingqiliu']),
+          listen('xingqiliu',['xingqiwu','xingqitian']),
+        ]},
+      { id:'6-4',title:'Mês, ano, hora',teaches:['yue','nian','xiaoshi','fenzhong'],
+        exercises:[
+          teach('yue'),teach('nian'),teach('xiaoshi'),teach('fenzhong'),
+          tone('yue'),tone('nian'),
+          quizPt('yue',['nian','xiaoshi']),quizPt('nian',['yue','fenzhong']),
+          quizPt('xiaoshi',['fenzhong','yue']),listen('fenzhong',['xiaoshi','nian']),
+        ]},
+    ],
+  },
+  {
+    id:7,title:'Cores e descrições',cn:'颜色',subtitle:'Como descrever o mundo',color:'#9B5DE5',
+    lessons:[
+      { id:'7-1',title:'Cores básicas',teaches:['hongse','huangse','lanse','lvse','baise','heise'],
+        exercises:[
+          teach('hongse'),teach('huangse'),teach('lanse'),
+          quizPt('hongse',['huangse','lanse']),listen('lanse',['hongse','lvse']),
+          teach('lvse'),teach('baise'),teach('heise'),
+          quizPt('lvse',['baise','heise']),quizPt('heise',['baise','hongse']),
+          listen('huangse',['hongse','lvse']),
+        ]},
+      { id:'7-2',title:'Adjetivos',teaches:['da','xiao','xin','jiu_old','changadj','duan','gaoxing','nanguo'],
+        exercises:[
+          teach('da'),teach('xiao'),tone('da'),tone('xiao'),
+          quizPt('da',['xiao','xin']),quizPt('xiao',['da','jiu_old']),
+          teach('xin'),teach('jiu_old'),teach('changadj'),teach('duan'),
+          quizPt('xin',['jiu_old','changadj']),quizPt('changadj',['duan','da']),
+          teach('gaoxing'),teach('nanguo'),
+          quizPt('gaoxing',['nanguo','kaixin']),listen('nanguo',['gaoxing','lei']),
+        ]},
+    ],
+  },
+  {
+    id:8,title:'Corpo e saúde',cn:'身体',subtitle:'Falar sobre você e a saúde',color:'#06A77D',
+    lessons:[
+      { id:'8-1',title:'Partes do corpo',teaches:['tou','yanjing','bizi','zui','erduo','shou','jiao','shenti'],
+        exercises:[
+          teach('tou'),teach('yanjing'),teach('bizi'),teach('zui'),
+          quizPt('tou',['yanjing','bizi']),listen('yanjing',['bizi','zui']),
+          teach('erduo'),teach('shou'),teach('jiao'),teach('shenti'),
+          quizPt('shou',['jiao','shenti']),quizPt('jiao',['shou','tou']),
+          write('shou'),tone('shou'),
+        ]},
+      { id:'8-2',title:'No médico',teaches:['bingle','yisheng','yiyuan','yao'],
+        exercises:[
+          teach('bingle'),teach('yisheng'),teach('yiyuan'),teach('yao'),
+          quizPt('bingle',['yisheng','yao']),quizPt('yisheng',['yiyuan','yao']),
+          listen('yiyuan',['yisheng','yao']),tone('yao'),
+          quizHanzi('yao',['yiyuan','bingle']),
+        ]},
+    ],
+  },
+  {
+    id:9,title:'Compras e viagem',cn:'购物旅行',subtitle:'Sobreviva nas ruas',color:'#EE6C4D',
+    lessons:[
+      { id:'9-1',title:'Comprar e vender',teaches:['mai','mai_sell','gui','pianyi','kuai','yuan','shangdian','shichang','yao_want','buyao'],
+        exercises:[
+          teach('mai'),teach('mai_sell'),tone('mai'),tone('mai_sell'),
+          quizPt('mai',['mai_sell','gui']),listen('mai',['mai_sell','yao_want']),
+          teach('gui'),teach('pianyi'),quizPt('gui',['pianyi','xin']),
+          teach('kuai'),teach('yuan'),teach('shangdian'),teach('shichang'),
+          quizPt('shangdian',['shichang','yiyuan']),
+          teach('yao_want'),teach('buyao'),
+          build('duoshao',['多少','钱'],['我','是']),
+        ]},
+      { id:'9-2',title:'Direções',teaches:['qu','lai','zheli','nali','zuo','you','qian_front','hou','shang','xia'],
+        exercises:[
+          teach('qu'),teach('lai'),tone('qu'),tone('lai'),
+          quizPt('qu',['lai','zou']),quizPt('lai',['qu','zai']),
+          teach('zheli'),teach('nali'),teach('zuo'),teach('you'),
+          quizPt('zuo',['you','qian_front']),listen('you',['zuo','hou']),
+          teach('qian_front'),teach('hou'),teach('shang'),teach('xia'),
+          quizPt('shang',['xia','qian_front']),quizPt('hou',['qian_front','xia']),
+        ]},
+      { id:'9-3',title:'Transporte',teaches:['ditie','gongche','chuzu','jichang','huoche'],
+        exercises:[
+          teach('ditie'),teach('gongche'),teach('chuzu'),teach('jichang'),teach('huoche'),
+          quizPt('ditie',['gongche','chuzu']),quizPt('jichang',['huoche','gongche']),
+          listen('gongche',['ditie','chuzu']),listen('huoche',['jichang','ditie']),
+          build('wozaixue',['我','在','学','中文'],['是','你']),
+        ]},
+    ],
+  },
+  {
+    id:10,title:'Vida e trabalho',cn:'生活工作',subtitle:'Avance para fluência',color:'#264653',
+    lessons:[
+      { id:'10-1',title:'Trabalho e estudo',teaches:['gongzuo','xuexi','gongsi','bangongshi','xuexiao','daxue'],
+        exercises:[
+          teach('gongzuo'),teach('xuexi'),teach('gongsi'),teach('bangongshi'),
+          quizPt('gongzuo',['xuexi','gongsi']),quizPt('xuexi',['gongzuo','xuexiao']),
+          teach('xuexiao'),teach('daxue'),quizPt('xuexiao',['daxue','bangongshi']),
+          listen('daxue',['xuexiao','gongsi']),
+          build('wozhuzai',['我','住','在'],['是','他']),
+        ]},
+      { id:'10-2',title:'Objetos do dia',teaches:['shu','bi','diannao','shouji'],
+        exercises:[
+          teach('shu'),teach('bi'),tone('shu'),tone('bi'),
+          teach('diannao'),teach('shouji'),
+          quizPt('shu',['bi','diannao']),quizPt('diannao',['shouji','bi']),
+          listen('shouji',['diannao','shu']),write('shu'),
+        ]},
+      { id:'10-3',title:'Verbos essenciais',teaches:['kan','ting','shuo','du','xie','zuo','shui','zou','zai','mang','lei','kaixin','shengqi'],
+        exercises:[
+          teach('kan'),teach('ting'),teach('shuo'),teach('du'),teach('xie'),
+          quizPt('kan',['ting','shuo']),quizPt('xie',['du','kan']),
+          tone('kan'),tone('ting'),tone('shuo'),
+          teach('zuo'),teach('shui'),teach('zou'),teach('zai'),
+          quizPt('shui',['zou','zai']),listen('zou',['zai','shui']),
+          teach('mang'),teach('lei'),teach('kaixin'),teach('shengqi'),
+          quizPt('mang',['lei','kaixin']),quizPt('shengqi',['kaixin','nanguo']),
+        ]},
+      { id:'10-4',title:'Perguntas e opiniões',teaches:['shenme','shei','nalia','shenmeshihou','weishenme','zenme','jige','wojuede','keneng','yiding','jiantingdong','nan'],
+        exercises:[
+          teach('shenme'),teach('shei'),teach('nalia'),teach('shenmeshihou'),
+          quizPt('shenme',['shei','nalia']),quizPt('shei',['nalia','zenme']),
+          teach('weishenme'),teach('zenme'),teach('jige'),
+          quizPt('weishenme',['zenme','shenmeshihou']),listen('zenme',['weishenme','nalia']),
+          teach('wojuede'),teach('keneng'),teach('yiding'),
+          quizPt('wojuede',['keneng','yiding']),
+          teach('jiantingdong'),teach('nan'),
+          quizPt('jiantingdong',['nan','keneng']),
+          build('wojuede',['我','觉得'],['是','他','也']),
+        ]},
+      { id:'10-5',title:'País e mundo',teaches:['zhongguo','baxi','shijie'],
+        exercises:[
+          teach('zhongguo'),teach('baxi'),teach('shijie'),
+          quizPt('zhongguo',['baxi','shijie']),listen('baxi',['zhongguo','shijie']),
+          build('baxiren',['我','是','巴西','人'],['你','他']),
+          build('woaini',['我','爱','你'],['他','是','也']),
+        ]},
+    ],
+  },
+];
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+const BADGES = [
+  { id:'first_lesson',icon:'🌱',title:'Primeiros passos',desc:'Complete sua primeira lição',check:p=>p.completedLessons.length>=1 },
+  { id:'level_1',icon:'🥉',title:'Iniciante',desc:'Termine o nível 1',check:p=>p.completedLevels.includes(1) },
+  { id:'level_3',icon:'🏮',title:'Lanterna acesa',desc:'Termine o nível 3',check:p=>p.completedLevels.includes(3) },
+  { id:'level_5',icon:'🥈',title:'Intermediário',desc:'Termine o nível 5',check:p=>p.completedLevels.includes(5) },
+  { id:'level_7',icon:'🥇',title:'Avançado',desc:'Termine o nível 7',check:p=>p.completedLevels.includes(7) },
+  { id:'level_10',icon:'🐉',title:'Dragão',desc:'Termine o nível 10 — rumo à fluência',check:p=>p.completedLevels.includes(10) },
+  { id:'vocab_30',icon:'📖',title:'Vocabulário 30',desc:'Aprenda 30 palavras',check:p=>p.learnedVocab.length>=30 },
+  { id:'vocab_75',icon:'📚',title:'Vocabulário 75',desc:'Aprenda 75 palavras',check:p=>p.learnedVocab.length>=75 },
+  { id:'vocab_150',icon:'🎓',title:'Vocabulário 150',desc:'Aprenda 150 palavras',check:p=>p.learnedVocab.length>=150 },
+  { id:'perfect_lesson',icon:'✨',title:'Lição perfeita',desc:'Complete uma lição sem erros',check:p=>p.perfectLessons>=1 },
+  { id:'perfect_5',icon:'🏆',title:'Mestre da precisão',desc:'5 lições perfeitas',check:p=>p.perfectLessons>=5 },
+  { id:'persistent',icon:'🔥',title:'Persistente',desc:'Complete 10 lições',check:p=>p.completedLessons.length>=10 },
+  { id:'writer',icon:'🖌️',title:'Calígrafo',desc:'Pratique 10 traçados',check:p=>p.writeCount>=10 },
+  { id:'listener',icon:'👂',title:'Bom ouvinte',desc:'Acerte 20 áudios',check:p=>p.listenCount>=20 },
+];
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const STORAGE_KEY = '@mandarim/v2';
+const MAX_HEARTS = 5;
+const HEART_REGEN_MS = 30 * 60 * 1000;
+const XP_PER_LEVEL = 100;
+
+const DEFAULT = {
+  xp:0,hearts:MAX_HEARTS,heartsUpdatedAt:Date.now(),
+  completedLessons:[],completedLevels:[],learnedVocab:[],
+  perfectLessons:0,unlockedBadges:[],writeCount:0,listenCount:0,
+};
+
+function applyHeartRegen(s){
+  if(s.hearts>=MAX_HEARTS) return {...s,heartsUpdatedAt:Date.now()};
+  const now=Date.now();
+  const elapsed=now-(s.heartsUpdatedAt||now);
+  const gained=Math.floor(elapsed/HEART_REGEN_MS);
+  if(gained<=0) return s;
+  const hearts=Math.min(MAX_HEARTS,s.hearts+gained);
+  const remainder=elapsed-gained*HEART_REGEN_MS;
+  return {...s,hearts,heartsUpdatedAt:now-remainder};
+}
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw) return {...DEFAULT};
+    return applyHeartRegen({...DEFAULT,...JSON.parse(raw)});
+  }catch{ return {...DEFAULT}; }
+}
+function saveState(){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }catch{} }
+
+let state = loadState();
+let screen = { name:'home' };
+
+/* ============================================================
+   ÁUDIO (TTS do navegador)
+   ============================================================ */
+let zhVoice = null;
+let voicesReady = false;
+let audioWarmed = false;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  if(voices && voices.length) voicesReady = true;
+  zhVoice = voices.find(v=>/^zh(-|_)?(CN|Hans)/i.test(v.lang))
+         || voices.find(v=>/^cmn/i.test(v.lang))
+         || voices.find(v=>/^zh/i.test(v.lang))
+         || null;
+  updateAudioNotice();
+}
+if('speechSynthesis' in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+  // Some browsers populate voices lazily — retry a couple of times
+  setTimeout(pickVoice, 500);
+  setTimeout(pickVoice, 1500);
+}
+function speak(text){
+  if(!('speechSynthesis' in window)){ showAudioToast('Seu navegador não suporta áudio (Web Speech API).'); return; }
+  try{
+    // Warm up the engine on first user gesture (helps iOS/Safari)
+    if(!audioWarmed){
+      audioWarmed = true;
+      const warm = new SpeechSynthesisUtterance('');
+      warm.volume = 0;
+      try{ speechSynthesis.speak(warm); }catch{}
+    }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN';
+    if(zhVoice) u.voice = zhVoice;
+    u.rate = 0.85;
+    u.pitch = 1;
+    let spoke = false;
+    u.onstart = ()=>{ spoke = true; };
+    u.onerror = ()=>{ if(!spoke) showAudioToast(audioMissingMsg()); };
+    speechSynthesis.speak(u);
+    // If nothing happened after 1.2s, likely no usable voice
+    setTimeout(()=>{ if(!spoke && !speechSynthesis.speaking) showAudioToast(audioMissingMsg()); }, 1200);
+  }catch{ showAudioToast(audioMissingMsg()); }
+}
+function audioMissingMsg(){
+  return zhVoice
+    ? 'Não foi possível tocar o áudio agora. Toque novamente.'
+    : 'Nenhuma voz em chinês (zh-CN) encontrada. Instale uma voz chinesa nas configurações de TTS do seu sistema.';
+}
+let toastTimer = null;
+function showAudioToast(msg){
+  let el = document.getElementById('audio-toast');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'audio-toast';
+    el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1A1A1A;color:#fff;padding:12px 16px;border-radius:12px;border:2px solid #D4AF37;font-size:13px;font-weight:700;max-width:88%;text-align:center;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3)';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.style.display='none'; }, 4500);
+}
+function updateAudioNotice(){
+  const banner = document.getElementById('voice-banner');
+  if(!banner) return;
+  if(!voicesReady) return;
+  banner.style.display = zhVoice ? 'none' : 'block';
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const playerLevel = (xp)=>Math.floor(xp/XP_PER_LEVEL)+1;
+const xpInLevel = (xp)=>xp%XP_PER_LEVEL;
+
+function getLesson(lessonId){
+  for(const lvl of LEVELS){
+    const l = lvl.lessons.find(x=>x.id===lessonId);
+    if(l) return {level:lvl,lesson:l};
+  }
+  return null;
+}
+function isLessonUnlocked(lessonId){
+  for(let li=0;li<LEVELS.length;li++){
+    const lvl=LEVELS[li];
+    const idx=lvl.lessons.findIndex(l=>l.id===lessonId);
+    if(idx===-1) continue;
+    if(li===0&&idx===0) return true;
+    if(idx===0) return state.completedLevels.includes(LEVELS[li-1].id);
+    return state.completedLessons.includes(lvl.lessons[idx-1].id);
+  }
+  return false;
+}
+function isLevelUnlocked(idx){ return idx===0||state.completedLevels.includes(LEVELS[idx-1].id); }
+
+function detectTone(pinyin){
+  // Returns array of tone numbers (1-4) in order
+  const map = {
+    'ā':1,'á':2,'ǎ':3,'à':4,
+    'ē':1,'é':2,'ě':3,'è':4,
+    'ī':1,'í':2,'ǐ':3,'ì':4,
+    'ō':1,'ó':2,'ǒ':3,'ò':4,
+    'ū':1,'ú':2,'ǔ':3,'ù':4,
+    'ǖ':1,'ǘ':2,'ǚ':3,'ǜ':4,
+  };
+  const out = [];
+  for(const ch of pinyin){ if(map[ch]) out.push(map[ch]); }
+  return out;
+}
+function stripTones(s){
+  return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z]/g,'');
+}
+
+function completeLesson(lesson,levelId,mistakes){
+  const alreadyDone = state.completedLessons.includes(lesson.id);
+  const xpGained = alreadyDone ? 5 : 10 + Math.max(0,10-mistakes*5);
+  state.xp += xpGained;
+  if(!alreadyDone) state.completedLessons = [...state.completedLessons,lesson.id];
+  if(mistakes===0) state.perfectLessons += 1;
+  const newVocab = lesson.teaches.filter(v=>!state.learnedVocab.includes(v));
+  state.learnedVocab = [...state.learnedVocab,...newVocab];
+  const level = LEVELS.find(l=>l.id===levelId);
+  const allDone = level.lessons.every(l=>state.completedLessons.includes(l.id));
+  if(allDone && !state.completedLevels.includes(levelId)){
+    state.completedLevels = [...state.completedLevels,levelId];
+  }
+  const newBadges=[];
+  for(const b of BADGES){
+    if(!state.unlockedBadges.includes(b.id)&&b.check(state)){
+      state.unlockedBadges=[...state.unlockedBadges,b.id];
+      newBadges.push(b);
+    }
+  }
+  saveState();
+  return {xpGained,newBadges};
+}
+function loseHeart(){
+  state = applyHeartRegen(state);
+  if(state.hearts>=MAX_HEARTS) state.heartsUpdatedAt = Date.now();
+  state.hearts = Math.max(0,state.hearts-1);
+  saveState();
+}
+function restoreHearts(){ state.hearts = MAX_HEARTS; state.heartsUpdatedAt = Date.now(); saveState(); }
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function bumpBadgeCounter(field){
+  state[field] = (state[field]||0)+1;
+  for(const b of BADGES){
+    if(!state.unlockedBadges.includes(b.id)&&b.check(state)){
+      state.unlockedBadges=[...state.unlockedBadges,b.id];
+    }
+  }
+  saveState();
+}
+
+const TYPE_LABELS = {
+  teach:'aprender',quiz:'múltipla',listen:'áudio',listenPt:'áudio→pt',
+  tone:'tom',typePinyin:'pinyin',write:'escrita',build:'frase',
+};
+function lessonTypeChips(lesson){
+  const types = [...new Set(lesson.exercises.map(e=>e.type))];
+  return types.map(t=>`<span class="type-chip">${TYPE_LABELS[t]||t}</span>`).join('');
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const app = document.getElementById('app');
+
+function statusBarHtml(){
+  const lvl = playerLevel(state.xp);
+  const cur = xpInLevel(state.xp);
+  const pct = (cur/XP_PER_LEVEL)*100;
+  return `
+    <div class="status">
+      <div class="pill"><span>⭐</span><span>Nv. ${lvl}</span></div>
+      <div class="xp-wrap">
+        <div class="xp-bg"><div class="xp-fill" style="width:${pct}%"></div></div>
+        <div class="xp-label">${cur} / ${XP_PER_LEVEL} XP</div>
+      </div>
+      <div class="pill hearts"><span>❤</span><span>${state.hearts}/${MAX_HEARTS}</span></div>
+    </div>`;
+}
+
+function renderHome(){
+  document.body.style.background = '';
+  const cards = LEVELS.map((lvl,idx)=>{
+    const unlocked = isLevelUnlocked(idx);
+    const done = lvl.lessons.filter(l=>state.completedLessons.includes(l.id)).length;
+    const total = lvl.lessons.length;
+    const complete = done===total;
+    const bg = unlocked ? lvl.color : '#9a8a7a';
+    const icon = !unlocked ? '🔒' : (complete ? '✓' : '');
+    return `
+      <button class="level-card" style="background:${bg}" ${unlocked?'':'disabled'} data-level="${lvl.id}">
+        <div class="level-card-head">
+          <span class="level-card-tag">第 ${lvl.id} 级 · Nível ${lvl.id}</span>
+          <span class="level-card-icon">${icon}</span>
+        </div>
+        <div class="level-card-cn">${escapeHtml(lvl.cn)}</div>
+        <div class="level-card-title">${escapeHtml(lvl.title)}</div>
+        <div class="level-card-sub">${escapeHtml(lvl.subtitle)}</div>
+        <div class="lc-prog-bg"><div class="lc-prog-fill" style="width:${(done/total)*100}%"></div></div>
+        <div class="lc-prog-label">${done} / ${total} lições</div>
+      </button>`;
+  }).join('');
+
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="home">
+      <div class="home-hero">
+        <div class="home-title">学中文</div>
+        <p class="home-sub">Aprenda mandarim — do "olá" à fluência</p>
+      </div>
+      <div id="voice-banner" style="display:none;background:#FFF3D6;border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--ink-soft);font-weight:600;line-height:1.4">
+        <strong style="color:var(--red)">⚠ Sem voz em chinês</strong> — para ouvir os áudios, instale uma voz <code>zh-CN</code> nas configurações de Texto-para-fala do seu Android (Configurações → Idiomas → Saída de texto-para-fala → Google Speech Services → idiomas → instalar chinês).
+      </div>
+      <div class="home-divider"><span>课程 LIÇÕES</span></div>
+      ${cards}
+      <div class="home-actions">
+        <button class="home-action" data-action="vocab">
+          <span class="ha-icon">📜</span>
+          Vocabulário (${state.learnedVocab.length})
+        </button>
+        <button class="home-action" data-action="badges">
+          <span class="ha-icon">🏆</span>
+          Conquistas (${state.unlockedBadges.length})
+        </button>
+      </div>
+      <button class="home-action" data-action="chat" style="display:block;width:100%;margin-top:10px;background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%);color:#fff;border-color:var(--gold);font-size:15px;padding:16px 12px">
+        <span class="ha-icon" style="font-size:26px">💬</span>
+        Conversar com o tutor IA · 中文对话
+      </button>
+    </div>`;
+
+  app.querySelectorAll('[data-level]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      screen = {name:'level',levelId:Number(el.dataset.level)};
+      render();
+    });
+  });
+  app.querySelector('[data-action="badges"]').addEventListener('click',()=>{ screen={name:'badges'}; render(); });
+  app.querySelector('[data-action="vocab"]').addEventListener('click',()=>{ screen={name:'vocab'}; render(); });
+  app.querySelector('[data-action="chat"]').addEventListener('click',()=>{ screen={name:'chat'}; render(); });
+}
+
+function renderLevel(){
+  const level = LEVELS.find(l=>l.id===screen.levelId);
+  document.body.style.background = level.color;
+  const items = level.lessons.map((lesson,idx)=>{
+    const unlocked = isLessonUnlocked(lesson.id);
+    const done = state.completedLessons.includes(lesson.id);
+    const inner = done ? '✓' : (unlocked ? (idx+1) : '🔒');
+    return `
+      <button class="lesson-item ${done?'done':''}" ${unlocked?'':'disabled'} data-lesson="${lesson.id}">
+        <div class="circle">${inner}</div>
+        <div style="flex:1">
+          <div class="lesson-tag">第 ${idx+1} 课 · Lição ${idx+1}</div>
+          <div class="lesson-name">${escapeHtml(lesson.title)}</div>
+          <div class="lesson-meta">${lesson.teaches.length} palavras · ${lesson.exercises.length} exercícios</div>
+          <div class="lesson-types">${lessonTypeChips(lesson)}</div>
+        </div>
+      </button>`;
+  }).join('');
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="level-page" style="background:${level.color}">
+      <div class="page-header"><button class="back-btn" data-action="back" style="color:#fff">← Voltar</button></div>
+      <div class="level-header">
+        <div class="cn">${escapeHtml(level.cn)}</div>
+        <h1>${escapeHtml(level.title)}</h1>
+        <p>${escapeHtml(level.subtitle)}</p>
+      </div>
+      <div class="level-body">${items}</div>
+    </div>`;
+  app.querySelector('[data-action="back"]').addEventListener('click',()=>{ screen={name:'home'}; render(); });
+  app.querySelectorAll('[data-lesson]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      screen = {name:'lesson',levelId:level.id,lessonId:el.dataset.lesson,idx:0,selected:null,checked:false,mistakes:0,writeDrawn:false,typedValue:''};
+      render();
+    });
+  });
+}
+
+/* ===== Lesson — exercise renderers ===== */
+function renderTeach(ex,level){
+  const w = V[ex.vocabId];
+  return `
+    <div class="teach-card">
+      <div class="teach-hanzi hanzi-font">${escapeHtml(w.hanzi)}</div>
+      <div class="teach-pinyin">${escapeHtml(w.pinyin)}</div>
+      <button class="audio-btn" data-action="speak" data-text="${escapeHtml(w.hanzi)}">
+        <span>🔊</span><span>Ouvir</span>
+      </button>
+      <div class="divider"></div>
+      <div class="teach-label">significa</div>
+      <div class="teach-pt">${escapeHtml(w.pt)}</div>
+    </div>`;
+}
+function renderQuiz(ex,level){
+  const w = V[ex.vocabId];
+  const promptText = ex.prompt==='pt' ? w.pt : w.hanzi;
+  const promptLabel = ex.prompt==='pt' ? 'Como se diz em mandarim?' : (ex.answer==='pinyin'?'Qual é o pinyin?':'O que significa?');
+  const ids = [ex.vocabId,...ex.distractors].slice().sort((a,b)=>a.localeCompare(b));
+  const opts = ids.map(id=>{
+    const o = V[id];
+    const text = ex.answer==='hanzi'?o.hanzi:ex.answer==='pinyin'?o.pinyin:o.pt;
+    let cls='';
+    if(screen.checked){
+      if(id===ex.vocabId) cls='correct';
+      else if(id===screen.selected) cls='wrong';
+    } else if(id===screen.selected) cls='selected';
+    const pinyinLine = ex.answer==='hanzi'?`<div class="option-pinyin">${escapeHtml(o.pinyin)}</div>`:'';
+    const textCls = ex.answer==='hanzi'?'option-text hanzi hanzi-font':'option-text';
+    return `<button class="option ${cls}" data-id="${id}" ${screen.checked?'disabled':''}>
+      <div class="${textCls}">${escapeHtml(text)}</div>${pinyinLine}
+    </button>`;
+  }).join('');
+  const promptCls = ex.prompt==='hanzi' ? 'hanzi hanzi-font' : '';
+  const pinyinHint = ex.prompt==='hanzi' && screen.checked ? `<div class="prompt-pinyin">${escapeHtml(w.pinyin)}</div>` : '';
+  return `
+    <div class="quiz-label">${promptLabel}</div>
+    <div class="prompt-box">
+      <div class="prompt-text ${promptCls}">${escapeHtml(promptText)}</div>
+      ${pinyinHint}
+    </div>
+    <div class="options">${opts}</div>`;
+}
+function renderListen(ex,level,toPt){
+  const w = V[ex.vocabId];
+  const ids = [ex.vocabId,...ex.distractors].slice().sort((a,b)=>a.localeCompare(b));
+  const opts = ids.map(id=>{
+    const o = V[id];
+    const text = toPt ? o.pt : o.hanzi;
+    let cls='';
+    if(screen.checked){
+      if(id===ex.vocabId) cls='correct';
+      else if(id===screen.selected) cls='wrong';
+    } else if(id===screen.selected) cls='selected';
+    const textCls = toPt ? 'option-text' : 'option-text hanzi hanzi-font';
+    const sub = toPt ? '' : `<div class="option-pinyin">${escapeHtml(o.pinyin)}</div>`;
+    return `<button class="option ${cls}" data-id="${id}" ${screen.checked?'disabled':''}>
+      <div class="${textCls}">${escapeHtml(text)}</div>${sub}
+    </button>`;
+  }).join('');
+  const revealHanzi = screen.checked ? `<div style="text-align:center;margin-bottom:14px"><span class="hanzi-font" style="font-size:32px;color:var(--ink)">${escapeHtml(w.hanzi)}</span> <span style="color:var(--red);font-weight:700">${escapeHtml(w.pinyin)}</span></div>` : '';
+  return `
+    <div class="quiz-label">Ouça e escolha ${toPt?'o significado':'o caractere'}</div>
+    <div class="listen-big">
+      <button class="audio-btn" data-action="speak" data-text="${escapeHtml(w.hanzi)}">
+        <span style="font-size:24px">🔊</span><span>Tocar áudio</span>
+      </button>
+      <div class="listen-big-label">Toque várias vezes se precisar</div>
+    </div>
+    ${revealHanzi}
+    <div class="options">${opts}</div>`;
+}
+function renderTone(ex,level){
+  const w = V[ex.vocabId];
+  const tones = w.tones || detectTone(w.pinyin);
+  const correctTone = tones[0] || 1;
+  const TONE_INFO = [
+    {n:1,mark:'ā',desc:'plano alto'},
+    {n:2,mark:'á',desc:'subindo'},
+    {n:3,mark:'ǎ',desc:'desce e sobe'},
+    {n:4,mark:'à',desc:'descendo forte'},
+  ];
+  const opts = TONE_INFO.map(t=>{
+    let cls='';
+    if(screen.checked){
+      if(t.n===correctTone) cls='correct';
+      else if(String(t.n)===screen.selected) cls='wrong';
+    } else if(String(t.n)===screen.selected) cls='selected';
+    return `<button class="tone-option ${cls}" data-id="${t.n}" ${screen.checked?'disabled':''}>
+      <div class="tone-num">${t.n}º</div>
+      <div class="tone-mark">${t.mark}</div>
+      <div class="tone-desc">${t.desc}</div>
+    </button>`;
+  }).join('');
+  const stripped = stripTones(w.pinyin);
+  const revealed = screen.checked ? `<div class="prompt-pinyin" style="margin-top:8px">${escapeHtml(w.pinyin)} · ${escapeHtml(w.pt)}</div>` : '';
+  return `
+    <div class="quiz-label">Qual é o tom?</div>
+    <div class="prompt-box">
+      <div class="prompt-text hanzi hanzi-font">${escapeHtml(w.hanzi)}</div>
+      <div class="prompt-pinyin">${escapeHtml(stripped)}</div>
+      <button class="audio-btn small" data-action="speak" data-text="${escapeHtml(w.hanzi)}" style="margin-top:10px;display:inline-flex">🔊 Ouvir</button>
+      ${revealed}
+    </div>
+    <div class="tone-options">${opts}</div>`;
+}
+function renderTypePinyin(ex,level){
+  const w = V[ex.vocabId];
+  const fb = screen.checked
+    ? (screen.typedValue && stripTones(screen.typedValue)===stripTones(w.pinyin)
+       ? `<div class="prompt-pinyin" style="color:var(--jade);margin-top:10px;font-weight:800">✓ ${escapeHtml(w.pinyin)}</div>`
+       : `<div class="prompt-pinyin" style="color:var(--red);margin-top:10px;font-weight:800">Resposta: ${escapeHtml(w.pinyin)}</div>`)
+    : '';
+  return `
+    <div class="quiz-label">Digite o pinyin (sem tons)</div>
+    <div class="prompt-box">
+      <div class="prompt-text hanzi hanzi-font">${escapeHtml(w.hanzi)}</div>
+      <button class="audio-btn small" data-action="speak" data-text="${escapeHtml(w.hanzi)}" style="margin-top:10px;display:inline-flex">🔊 Ouvir</button>
+      ${fb}
+    </div>
+    <input class="type-input" type="text" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false"
+           placeholder="ex: nihao" data-action="type-input" value="${escapeHtml(screen.typedValue||'')}" ${screen.checked?'disabled':''}>
+    <div class="type-hint">Sem acentos. Espaços e maiúsculas são ignorados.</div>`;
+}
+function renderWrite(ex,level){
+  const w = V[ex.vocabId];
+  return `
+    <div class="quiz-label">Pratique o traçado</div>
+    <div class="write-stage">
+      <div class="write-canvas-wrap">
+        <div class="write-hanzi-ghost">${escapeHtml(w.hanzi)}</div>
+        <canvas class="write-canvas" data-canvas></canvas>
+      </div>
+      <div class="write-pinyin">${escapeHtml(w.pinyin)} 🔊 <button class="audio-btn small" data-action="speak" data-text="${escapeHtml(w.hanzi)}" style="margin-left:6px">Ouvir</button></div>
+      <div class="write-pt">${escapeHtml(w.pt)}</div>
+      <div class="write-tools">
+        <button class="tool-btn" data-action="clear-canvas">🧽 Limpar</button>
+      </div>
+    </div>
+    <div class="type-hint">Trace por cima do caractere. Quando estiver pronto, toque em Continuar.</div>`;
+}
+function renderBuild(ex,level){
+  const w = V[ex.vocabId];
+  const built = screen.buildOrder || [];
+  const slotsTotal = ex.parts.length;
+  const slotsHtml = Array.from({length:slotsTotal}).map((_,i)=>{
+    const word = built[i];
+    return word!=null ? `<div class="build-slot">${escapeHtml(word)}</div>` : `<div class="build-slot empty">·</div>`;
+  }).join('');
+  // Pool: parts + distractors, shuffled deterministically
+  const pool = ex.parts.concat(ex.distractors||[]).slice().sort();
+  const used = new Set();
+  built.forEach(b=>used.add(b));
+  const poolHtml = pool.map((word,i)=>{
+    // Look up pinyin of word if it exists in vocab by hanzi
+    const match = Object.values(V).find(x=>x.hanzi===word);
+    const pinyin = match?match.pinyin:'';
+    const isUsed = built.some(b=>b===word);
+    return `<button class="build-word" data-build-word="${escapeHtml(word)}" data-build-idx="${i}" ${isUsed||screen.checked?'disabled':''}>
+      <span>${escapeHtml(word)}</span>
+      ${pinyin?`<span class="bw-pinyin">${escapeHtml(pinyin)}</span>`:''}
+    </button>`;
+  }).join('');
+  const feedback = screen.checked
+    ? (built.join('')===ex.parts.join('')
+       ? `<div class="feedback ok">✓ Perfeito! ${escapeHtml(w.hanzi)} — ${escapeHtml(w.pinyin)}</div>`
+       : `<div class="feedback bad">✗ Resposta: ${escapeHtml(ex.parts.join(' '))} — ${escapeHtml(w.pinyin)}</div>`)
+    : '';
+  return `
+    <div class="quiz-label">Monte a frase: "${escapeHtml(w.pt)}"</div>
+    <div class="build-target">${slotsHtml}</div>
+    <div class="build-pool">${poolHtml}</div>
+    <div style="display:flex;justify-content:center;margin-top:14px">
+      <button class="tool-btn" data-action="build-reset" ${screen.checked?'disabled':''}>↺ Limpar</button>
+    </div>
+    ${feedback}`;
+}
+
+function renderLesson(){
+  const { level, lesson } = getLesson(screen.lessonId);
+  const ex = lesson.exercises[screen.idx];
+  const total = lesson.exercises.length;
+  const pct = (screen.idx/total)*100;
+  document.body.style.background = '';
+
+  let bodyHtml='';
+  if(ex.type==='teach') bodyHtml = renderTeach(ex,level);
+  else if(ex.type==='quiz') bodyHtml = renderQuiz(ex,level);
+  else if(ex.type==='listen') bodyHtml = renderListen(ex,level,false);
+  else if(ex.type==='listenPt') bodyHtml = renderListen(ex,level,true);
+  else if(ex.type==='tone') bodyHtml = renderTone(ex,level);
+  else if(ex.type==='typePinyin') bodyHtml = renderTypePinyin(ex,level);
+  else if(ex.type==='write') bodyHtml = renderWrite(ex,level);
+  else if(ex.type==='build') bodyHtml = renderBuild(ex,level);
+
+  let footerHtml;
+  if(ex.type==='teach' || ex.type==='write'){
+    footerHtml = `<button class="btn-primary" style="background:${level.color}" data-action="next">Continuar</button>`;
+  } else if(ex.type==='build'){
+    const built = screen.buildOrder||[];
+    if(!screen.checked){
+      const ready = built.length===ex.parts.length;
+      footerHtml = `<button class="btn-primary" style="background:${level.color}" data-action="check-build" ${ready?'':'disabled'}>Verificar</button>`;
+    } else {
+      footerHtml = `<button class="btn-primary" style="background:${level.color}" data-action="next">Continuar</button>`;
+    }
+  } else if(ex.type==='typePinyin'){
+    if(!screen.checked){
+      const ready = (screen.typedValue||'').trim().length>0;
+      footerHtml = `<button class="btn-primary" style="background:${level.color}" data-action="check-type" ${ready?'':'disabled'}>Verificar</button>`;
+    } else {
+      footerHtml = `<button class="btn-primary" style="background:${level.color}" data-action="next">Continuar</button>`;
+    }
+  } else if(!screen.checked){
+    footerHtml = `<button class="btn-primary" style="background:${level.color}" data-action="check" ${screen.selected!=null?'':'disabled'}>Verificar</button>`;
+  } else {
+    const w = V[ex.vocabId];
+    let isOk=false, ansText='';
+    if(ex.type==='tone'){
+      const tones = w.tones || detectTone(w.pinyin);
+      const correctTone = tones[0] || 1;
+      isOk = String(correctTone)===screen.selected;
+      ansText = `${correctTone}º tom (${w.pinyin})`;
+    } else {
+      isOk = screen.selected===ex.vocabId;
+      ansText = ex.type==='listen' ? `${w.hanzi} (${w.pinyin})`
+              : ex.type==='listenPt' ? w.pt
+              : ex.answer==='hanzi' ? `${w.hanzi} (${w.pinyin})`
+              : ex.answer==='pinyin' ? w.pinyin
+              : w.pt;
+    }
+    footerHtml = `
+      <div class="feedback ${isOk?'ok':'bad'}">${isOk?'✓ Correto!':'✗ Resposta: '+escapeHtml(ansText)}</div>
+      <button class="btn-primary" style="background:${level.color}" data-action="next">Continuar</button>`;
+  }
+
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="lesson-page">
+      <div class="top-bar">
+        <button class="close-btn" data-action="exit">✕</button>
+        <div class="progress-bg"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="hearts-mini">❤ ${state.hearts}</div>
+      </div>
+      <div class="lesson-body">${bodyHtml}</div>
+      <div class="footer">${footerHtml}</div>
+    </div>`;
+
+  bindLessonEvents(ex,level,lesson,total);
+
+  // (auto-play removed — TTS exige gesto do usuário em muitos navegadores)
+  // Setup canvas if write
+  if(ex.type==='write') setupCanvas();
+}
+
+function bindLessonEvents(ex,level,lesson,total){
+  const exitBtn = app.querySelector('[data-action="exit"]');
+  if(exitBtn) exitBtn.addEventListener('click',()=>{ screen={name:'level',levelId:level.id}; render(); });
+
+  app.querySelectorAll('[data-action="speak"]').forEach(el=>{
+    el.addEventListener('click',(e)=>{ e.preventDefault(); speak(el.dataset.text); });
+  });
+  app.querySelectorAll('[data-id]').forEach(el=>{
+    el.addEventListener('click',()=>{ screen.selected = el.dataset.id; render(); });
+  });
+  const input = app.querySelector('[data-action="type-input"]');
+  if(input){
+    input.addEventListener('input',()=>{ screen.typedValue = input.value; updateTypeCheckBtn(); });
+    input.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); const btn = app.querySelector('[data-action="check-type"]'); if(btn && !btn.disabled) btn.click(); } });
+    setTimeout(()=>{ if(!screen.checked) input.focus(); },50);
+  }
+  const clearCanvas = app.querySelector('[data-action="clear-canvas"]');
+  if(clearCanvas) clearCanvas.addEventListener('click',()=>{ clearWriteCanvas(); });
+
+  // build word buttons
+  app.querySelectorAll('[data-build-word]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      if(screen.checked) return;
+      screen.buildOrder = (screen.buildOrder||[]).concat([el.dataset.buildWord]);
+      if(screen.buildOrder.length > ex.parts.length) screen.buildOrder = screen.buildOrder.slice(0,ex.parts.length);
+      render();
+    });
+  });
+  const resetBuild = app.querySelector('[data-action="build-reset"]');
+  if(resetBuild) resetBuild.addEventListener('click',()=>{ screen.buildOrder = []; render(); });
+
+  const check = app.querySelector('[data-action="check"]');
+  if(check) check.addEventListener('click',()=>{
+    if(screen.selected==null) return;
+    screen.checked = true;
+    const w = V[ex.vocabId];
+    let ok = false;
+    if(ex.type==='tone'){
+      const tones = w.tones || detectTone(w.pinyin);
+      ok = String(tones[0]||1)===screen.selected;
+    } else {
+      ok = screen.selected===ex.vocabId;
+    }
+    if(ok && (ex.type==='listen'||ex.type==='listenPt')) bumpBadgeCounter('listenCount');
+    if(!ok) handleMistake(level);
+    render();
+  });
+  const checkType = app.querySelector('[data-action="check-type"]');
+  if(checkType) checkType.addEventListener('click',()=>{
+    const w = V[ex.vocabId];
+    const a = stripTones(screen.typedValue||'');
+    const b = stripTones(w.pinyin);
+    screen.checked = true;
+    if(a!==b) handleMistake(level);
+    render();
+  });
+  const checkBuild = app.querySelector('[data-action="check-build"]');
+  if(checkBuild) checkBuild.addEventListener('click',()=>{
+    screen.checked = true;
+    const built = (screen.buildOrder||[]).join('');
+    if(built!==ex.parts.join('')) handleMistake(level);
+    render();
+  });
+  const nxt = app.querySelector('[data-action="next"]');
+  if(nxt) nxt.addEventListener('click',()=>{
+    if(ex.type==='write'){
+      if(screen.writeDrawn) bumpBadgeCounter('writeCount');
+    }
+    if(screen.idx+1>=total){
+      const r = completeLesson(lesson,level.id,screen.mistakes);
+      screen = {name:'finished',levelId:level.id,xpGained:r.xpGained,newBadges:r.newBadges,mistakes:screen.mistakes};
+      render();
+    } else {
+      screen.idx += 1;
+      screen.selected = null;
+      screen.checked = false;
+      screen.typedValue = '';
+      screen.writeDrawn = false;
+      screen.audioPlayed = false;
+      screen.buildOrder = [];
+      render();
+    }
+  });
+}
+
+function updateTypeCheckBtn(){
+  const btn = app.querySelector('[data-action="check-type"]');
+  if(!btn) return;
+  const ready = (screen.typedValue||'').trim().length>0;
+  if(ready) btn.removeAttribute('disabled'); else btn.setAttribute('disabled','');
+}
+
+function handleMistake(level){
+  screen.mistakes += 1;
+  loseHeart();
+  if(state.hearts<=0){
+    setTimeout(()=>{ screen={name:'failed',levelId:level.id}; render(); },600);
+  }
+}
+
+/* ===== Canvas (write) ===== */
+let canvasCtx=null,canvasEl=null,drawing=false,lastPt=null;
+function setupCanvas(){
+  canvasEl = app.querySelector('[data-canvas]');
+  if(!canvasEl) return;
+  const wrap = canvasEl.parentElement;
+  const size = wrap.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvasEl.width = size.width * dpr;
+  canvasEl.height = size.height * dpr;
+  canvasCtx = canvasEl.getContext('2d');
+  canvasCtx.scale(dpr,dpr);
+  canvasCtx.lineCap='round';
+  canvasCtx.lineJoin='round';
+  canvasCtx.lineWidth=8;
+  canvasCtx.strokeStyle='#1A1A1A';
+
+  const getPt=(e)=>{
+    const r = canvasEl.getBoundingClientRect();
+    const t = e.touches?e.touches[0]:e;
+    return {x:t.clientX-r.left,y:t.clientY-r.top};
+  };
+  const start=(e)=>{ e.preventDefault(); drawing=true; lastPt=getPt(e); screen.writeDrawn=true; };
+  const move=(e)=>{
+    if(!drawing) return;
+    e.preventDefault();
+    const p=getPt(e);
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(lastPt.x,lastPt.y);
+    canvasCtx.lineTo(p.x,p.y);
+    canvasCtx.stroke();
+    lastPt=p;
+  };
+  const end=()=>{ drawing=false; };
+  canvasEl.addEventListener('mousedown',start);
+  canvasEl.addEventListener('mousemove',move);
+  window.addEventListener('mouseup',end);
+  canvasEl.addEventListener('touchstart',start,{passive:false});
+  canvasEl.addEventListener('touchmove',move,{passive:false});
+  canvasEl.addEventListener('touchend',end);
+}
+function clearWriteCanvas(){
+  if(!canvasCtx||!canvasEl) return;
+  canvasCtx.clearRect(0,0,canvasEl.width,canvasEl.height);
+  screen.writeDrawn=false;
+}
+
+/* ===== End screens ===== */
+function renderFinished(){
+  const level = LEVELS.find(l=>l.id===screen.levelId);
+  document.body.style.background = level.color;
+  const badgesHtml = screen.newBadges.length===0 ? '' : `
+    <div class="new-badges">
+      <div class="nb-title">🎉 Nova conquista!</div>
+      ${screen.newBadges.map(b=>`
+        <div class="nb-row">
+          <div class="nb-icon">${b.icon}</div>
+          <div><div class="nb-name">${escapeHtml(b.title)}</div><div class="nb-desc">${escapeHtml(b.desc)}</div></div>
+        </div>`).join('')}
+    </div>`;
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="end-page" style="background:${level.color}">
+      <div class="end-body">
+        <div class="end-emoji">🏮</div>
+        <div class="end-title">太棒了！</div>
+        <div class="end-sub">Lição concluída — continue praticando.</div>
+        <div class="end-stats">
+          <div class="end-stat"><div class="end-stat-val">+${screen.xpGained}</div><div class="end-stat-lbl">XP</div></div>
+          <div class="end-stat"><div class="end-stat-val">${screen.mistakes}</div><div class="end-stat-lbl">Erros</div></div>
+        </div>
+        ${badgesHtml}
+      </div>
+      <div class="footer"><button class="btn-end" data-action="home">Continuar</button></div>
+    </div>`;
+  app.querySelector('[data-action="home"]').addEventListener('click',()=>{ screen={name:'home'}; render(); });
+}
+function renderFailed(){
+  const level = LEVELS.find(l=>l.id===screen.levelId);
+  document.body.style.background = level.color;
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="end-page" style="background:${level.color}">
+      <div class="end-body">
+        <div class="end-emoji">💔</div>
+        <div class="end-title">没有心了</div>
+        <div class="end-sub">Sem vidas — tente novamente, você consegue.</div>
+      </div>
+      <div class="footer">
+        <button class="btn-end" data-action="retry">Restaurar vidas (${MAX_HEARTS})</button>
+        <button class="btn-exit" data-action="exit">Sair</button>
+      </div>
+    </div>`;
+  app.querySelector('[data-action="retry"]').addEventListener('click',()=>{
+    restoreHearts(); screen={name:'level',levelId:level.id}; render();
+  });
+  app.querySelector('[data-action="exit"]').addEventListener('click',()=>{ screen={name:'home'}; render(); });
+}
+
+function renderBadges(){
+  document.body.style.background='';
+  const items = BADGES.map(b=>{
+    const unlocked = state.unlockedBadges.includes(b.id);
+    return `
+      <div class="badge-row ${unlocked?'unlocked':'locked'}">
+        <div class="badge-icon">${unlocked?b.icon:'🔒'}</div>
+        <div style="flex:1">
+          <div class="badge-title">${escapeHtml(b.title)}</div>
+          <div class="badge-desc">${escapeHtml(b.desc)}</div>
+        </div>
+      </div>`;
+  }).join('');
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="page-header"><button class="back-btn" data-action="back">← Voltar</button></div>
+    <div class="badges-page">
+      <h1>奖章 Conquistas</h1>
+      <p class="sub">${state.unlockedBadges.length} de ${BADGES.length} desbloqueadas</p>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-val">${state.learnedVocab.length}</div><div class="stat-lbl">Palavras</div></div>
+        <div class="stat-card"><div class="stat-val">${state.completedLessons.length}</div><div class="stat-lbl">Lições</div></div>
+        <div class="stat-card"><div class="stat-val">${state.perfectLessons}</div><div class="stat-lbl">Perfeitas</div></div>
+        <div class="stat-card"><div class="stat-val">${state.writeCount||0}</div><div class="stat-lbl">Traços</div></div>
+        <div class="stat-card"><div class="stat-val">${state.listenCount||0}</div><div class="stat-lbl">Áudios</div></div>
+      </div>
+      ${items}
+      <button class="reset-btn" data-action="reset">Zerar progresso</button>
+    </div>`;
+  app.querySelector('[data-action="back"]').addEventListener('click',()=>{ screen={name:'home'}; render(); });
+  app.querySelector('[data-action="reset"]').addEventListener('click',()=>{
+    if(confirm('Zerar todo o progresso? XP, vidas, lições e conquistas serão apagados.')){
+      state={...DEFAULT}; saveState(); screen={name:'home'}; render();
+    }
+  });
+}
+
+function renderVocab(){
+  document.body.style.background='';
+  const learned = state.learnedVocab;
+  const allKeys = Object.keys(V);
+  const knownItems = learned.map(id=>{
+    const w = V[id]; if(!w) return '';
+    return `<div class="vocab-list-item">
+      <div class="vli-hanzi hanzi-font">${escapeHtml(w.hanzi)}</div>
+      <div class="vli-info">
+        <div class="vli-pinyin">${escapeHtml(w.pinyin)}</div>
+        <div class="vli-pt">${escapeHtml(w.pt)}</div>
+      </div>
+      <button class="audio-btn small" data-action="speak" data-text="${escapeHtml(w.hanzi)}">🔊</button>
+    </div>`;
+  }).join('');
+  const empty = learned.length===0
+    ? `<p style="color:var(--ink-soft);font-weight:600;text-align:center;margin-top:30px">Comece uma lição para colecionar palavras aqui 🌱</p>`
+    : '';
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="page-header"><button class="back-btn" data-action="back">← Voltar</button></div>
+    <div class="badges-page">
+      <h1>词汇 Vocabulário</h1>
+      <p class="sub">${learned.length} de ${allKeys.length} palavras aprendidas</p>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-val">${learned.length}</div><div class="stat-lbl">Aprendidas</div></div>
+        <div class="stat-card"><div class="stat-val">${allKeys.length}</div><div class="stat-lbl">Total no app</div></div>
+        <div class="stat-card"><div class="stat-val">${Math.round((learned.length/allKeys.length)*100)}%</div><div class="stat-lbl">Cobertura</div></div>
+      </div>
+      ${knownItems}${empty}
+    </div>`;
+  app.querySelector('[data-action="back"]').addEventListener('click',()=>{ screen={name:'home'}; render(); });
+  app.querySelectorAll('[data-action="speak"]').forEach(el=>{
+    el.addEventListener('click',()=>speak(el.dataset.text));
+  });
+}
+
+/* ============================================================
+   CHAT — AI conversation tutor (Anthropic Claude API, BYOK)
+   ============================================================ */
+const CHAT_STORAGE = {
+  key: '@mandarim/v2/chat/gemini_apikey',
+  model: '@mandarim/v2/chat/gemini_model',
+  history: '@mandarim/v2/chat/history',
+  showPinyin: '@mandarim/v2/chat/showPinyin',
+  showPt: '@mandarim/v2/chat/showPt',
+  sttLang: '@mandarim/v2/chat/sttLang',
+};
+const MODELS = [
+  { id:'gemini-2.5-flash', label:'Gemini 2.5 Flash (rápido, free tier generoso)' },
+  { id:'gemini-2.5-pro', label:'Gemini 2.5 Pro (qualidade máxima)' },
+  { id:'gemini-2.0-flash', label:'Gemini 2.0 Flash (estável)' },
+];
+const MAX_HISTORY_TURNS = 20;
+
+function chatGet(key, def){ try{ const v=localStorage.getItem(key); return v==null?def:JSON.parse(v); }catch{ return def; } }
+function chatSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch{} }
+
+function chatHistory(){ return chatGet(CHAT_STORAGE.history, []); }
+function chatSetHistory(h){ chatSet(CHAT_STORAGE.history, h); }
+function chatApiKey(){ return chatGet(CHAT_STORAGE.key, ''); }
+function chatModel(){
+  const stored = chatGet(CHAT_STORAGE.model, MODELS[0].id);
+  return MODELS.some(m=>m.id===stored) ? stored : MODELS[0].id;
+}
+
+let chatPending = false;
+let chatModalOpen = false;
+let chatDraft = '';
+
+function chatSystemPrompt(){
+  const learned = state.learnedVocab.map(id=>{
+    const v = V[id]; if(!v) return null;
+    return `${v.hanzi} (${v.pinyin}) = ${v.pt}`;
+  }).filter(Boolean).join('; ');
+  const completedLevels = state.completedLevels.length;
+  const totalLevels = LEVELS.length;
+  return `Você é um tutor amigável e paciente de chinês mandarim para um estudante brasileiro que está aprendendo via um app.
+
+NÍVEL DO ALUNO:
+- Lições completadas: ${state.completedLessons.length}
+- Níveis terminados: ${completedLevels} de ${totalLevels}
+- Palavras já aprendidas (${state.learnedVocab.length}): ${learned || '(nenhuma ainda)'}
+
+REGRAS:
+1. Responda em mandarim usando primariamente o vocabulário que o aluno já conhece. Você pode introduzir 1-2 palavras novas por turno, mas sempre traduza claramente.
+2. SEMPRE mantenha a conversa fluindo: depois de responder o que foi perguntado, ADICIONE algo que dê continuidade — uma pergunta natural, um comentário curioso, uma sugestão, ou um convite pra contar mais. NUNCA termine apenas respondendo; sempre devolva o turno pro aluno. Exemplos:
+   - Aluno diz "estou bem" → você responde + pergunta sobre o dia, o que vai fazer, do que gosta, etc.
+   - Aluno conta algo que gosta → você reage + pergunta detalhes, frequência, opinião.
+   - Aluno pede uma palavra → você ensina + usa ela numa pergunta de exemplo.
+   Varie os tipos de gancho (perguntas abertas, fechadas, comentários, opiniões) pra não parecer mecânico. Nunca repita o mesmo gancho ("e você?") em turnos seguidos.
+3. Adapte o tópico ao aluno: se ele mostrar interesse em algo (comida, viagem, trabalho, hobbies, família), explore esse tema por vários turnos antes de mudar.
+4. Mantenha as respostas curtas e conversacionais (1-3 frases incluindo o gancho). Não dê aulas longas — converse de verdade, como um amigo chinês paciente.
+5. Se o aluno escreveu algo em chinês com erros (gramática, tom, escolha de caractere), liste em "corrections" com explicação curta em português. Se o aluno escreveu certo, deixe "corrections" vazio.
+6. Em "suggestions", ofereça 1-3 maneiras alternativas/melhores de dizer o que o aluno tentou dizer. Se não há nada a sugerir, deixe vazio.
+7. Se o aluno escrever em português ou em português+chinês misturado, está OK — traduza ou responda à intenção dele em chinês.
+8. Use tons corretos no pinyin (ā á ǎ à etc).
+9. Seja encorajador. Comemore quando o aluno acertar.
+10. Adeque a complexidade ao nível do aluno. Para iniciantes (poucas lições), use frases muito simples.
+
+Responda APENAS no formato JSON especificado.`;
+}
+
+const CHAT_SCHEMA = {
+  type:'OBJECT',
+  properties:{
+    reply_hanzi:{ type:'STRING', description:'Sua resposta em caracteres chineses (hanzi).' },
+    reply_pinyin:{ type:'STRING', description:'A mesma resposta em pinyin com tons.' },
+    reply_pt:{ type:'STRING', description:'Tradução em português brasileiro.' },
+    corrections:{
+      type:'ARRAY',
+      description:'Correções aos erros do aluno. Array vazio se não houver erros.',
+      items:{
+        type:'OBJECT',
+        properties:{
+          original:{ type:'STRING', description:'Trecho original do aluno com erro.' },
+          fixed:{ type:'STRING', description:'Versão corrigida em hanzi.' },
+          explanation:{ type:'STRING', description:'Explicação breve do erro em português.' },
+        },
+        required:['original','fixed','explanation'],
+        propertyOrdering:['original','fixed','explanation'],
+      },
+    },
+    suggestions:{
+      type:'ARRAY',
+      description:'Sugestões de frases alternativas em hanzi com pinyin (ex: "我很好 (wǒ hěn hǎo) — estou bem"). Array vazio se não houver.',
+      items:{ type:'STRING' },
+    },
+  },
+  required:['reply_hanzi','reply_pinyin','reply_pt','corrections','suggestions'],
+  propertyOrdering:['reply_hanzi','reply_pinyin','reply_pt','corrections','suggestions'],
+};
+
+async function callGemini(userText){
+  const apiKey = chatApiKey();
+  if(!apiKey) throw new Error('NO_KEY');
+  const model = chatModel();
+  const history = chatHistory();
+  const recentTurns = history.slice(-MAX_HISTORY_TURNS*2);
+
+  const contents = [];
+  for(const t of recentTurns){
+    if(t.role === 'user'){
+      contents.push({ role:'user', parts:[{ text: t.text }] });
+    } else if(t.role === 'assistant' && t.data){
+      contents.push({ role:'model', parts:[{ text: JSON.stringify(t.data) }] });
+    }
+  }
+  contents.push({ role:'user', parts:[{ text: userText }] });
+
+  const body = {
+    system_instruction:{ parts:[{ text: chatSystemPrompt() }] },
+    contents,
+    generationConfig:{
+      responseMimeType:'application/json',
+      responseSchema: CHAT_SCHEMA,
+      maxOutputTokens: 1024,
+      temperature: 0.8,
+    },
+  };
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const res = await fetch(url, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if(!res.ok){
+    let msg = `HTTP ${res.status}`;
+    let errStatus = '';
+    try{
+      const err = await res.json();
+      msg = err?.error?.message || msg;
+      errStatus = err?.error?.status || '';
+    }catch{}
+    if(res.status === 400 && /API key/i.test(msg)) throw new Error('BAD_KEY');
+    if(res.status === 401 || res.status === 403) throw new Error('BAD_KEY');
+    if(res.status === 429) throw new Error('RATE_LIMIT:'+msg);
+    if(res.status === 400) throw new Error('BAD_REQUEST:'+msg);
+    throw new Error('API:'+msg);
+  }
+
+  const data = await res.json();
+  const candidate = data.candidates?.[0];
+  if(!candidate) throw new Error('NO_CONTENT');
+  const finish = candidate.finishReason;
+  if(finish && finish !== 'STOP' && finish !== 'MAX_TOKENS'){
+    if(finish === 'SAFETY') throw new Error('API:Resposta bloqueada por filtros de segurança do Gemini. Tente reformular.');
+    if(finish === 'RECITATION') throw new Error('API:Resposta bloqueada (recitação). Tente reformular.');
+    throw new Error('API:Geração interrompida ('+finish+').');
+  }
+  const textPart = (candidate.content?.parts||[]).find(p=>typeof p.text==='string');
+  if(!textPart) throw new Error('NO_CONTENT');
+  let parsed;
+  try{ parsed = JSON.parse(textPart.text); }
+  catch{ throw new Error('PARSE_ERROR'); }
+  return { parsed, usage: data.usageMetadata };
+}
+
+async function sendChatMessage(text){
+  text = (text||'').trim();
+  if(!text || chatPending) return;
+  if(!chatApiKey()){ chatModalOpen = true; render(); return; }
+
+  const history = chatHistory();
+  history.push({ role:'user', text, ts: Date.now() });
+  chatSetHistory(history);
+  chatDraft = '';
+  chatPending = true;
+  render();
+
+  try{
+    const { parsed } = await callGemini(text);
+    const h2 = chatHistory();
+    h2.push({ role:'assistant', data: parsed, ts: Date.now() });
+    chatSetHistory(h2);
+    if(voiceTriggered){
+      voiceTriggered = false;
+      setTimeout(()=>{ try{ speak(parsed.reply_hanzi||''); }catch{} }, 250);
+    }
+  }catch(e){
+    const h2 = chatHistory();
+    let msg = 'Erro ao chamar a API.';
+    const m = String(e.message||e);
+    if(m==='NO_KEY') msg = 'Configure sua chave da API em ⚙ Ajustes.';
+    else if(m==='BAD_KEY') msg = 'Chave da API inválida ou sem créditos. Verifique em ⚙ Ajustes.';
+    else if(m.startsWith('RATE_LIMIT')) msg = 'Você atingiu o limite de requisições. Espere um pouco e tente de novo.';
+    else if(m.startsWith('BAD_REQUEST')) msg = 'Requisição inválida: ' + m.slice(12);
+    else if(m.startsWith('API')) msg = 'Erro da API: ' + m.slice(4);
+    else if(m==='PARSE_ERROR') msg = 'Resposta da IA veio em formato inesperado. Tente de novo.';
+    else msg = 'Erro de rede ou CORS. Verifique sua conexão.';
+    h2.push({ role:'error', text: msg, ts: Date.now() });
+    chatSetHistory(h2);
+  }finally{
+    chatPending = false;
+    render();
+  }
+}
+
+function escapeHtml2(s){ return escapeHtml(s); }
+
+/* ---- Speech recognition (STT) ---- */
+let sttRec = null;
+let sttListening = false;
+let sttError = '';
+let voiceTriggered = false;
+function sttSupported(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+function sttLang(){ return chatGet(CHAT_STORAGE.sttLang, 'pt-BR'); }
+function sttToggleLang(){
+  const cur = sttLang();
+  chatSet(CHAT_STORAGE.sttLang, cur === 'pt-BR' ? 'zh-CN' : 'pt-BR');
+}
+function sttStart(){
+  if(sttListening){ try{ sttRec && sttRec.stop(); }catch{} return; }
+  if(!sttSupported()){ sttError = 'Reconhecimento de voz não suportado neste navegador.'; render(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SR();
+  rec.lang = sttLang();
+  rec.interimResults = true;
+  rec.continuous = false;
+  rec.maxAlternatives = 1;
+  let finalText = '';
+  rec.onstart = ()=>{ sttListening = true; sttError = ''; render(); };
+  rec.onresult = (e)=>{
+    let interim = '';
+    for(let i = e.resultIndex; i < e.results.length; i++){
+      const t = e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalText += t; else interim += t;
+    }
+    chatDraft = (finalText + interim).trim();
+    const inp = document.getElementById('chat-input');
+    if(inp){ inp.value = chatDraft; }
+  };
+  rec.onerror = (e)=>{
+    sttListening = false;
+    const err = e.error || 'unknown';
+    if(err === 'not-allowed' || err === 'service-not-allowed') sttError = 'Permissão de microfone negada. Libere nas configurações do navegador.';
+    else if(err === 'no-speech') sttError = 'Nada captado. Toque de novo e fale.';
+    else if(err === 'network') sttError = 'Erro de rede no reconhecimento de voz.';
+    else sttError = 'Erro: '+err;
+    render();
+  };
+  rec.onend = ()=>{
+    sttListening = false;
+    sttRec = null;
+    const text = finalText.trim();
+    if(text){
+      voiceTriggered = true;
+      sendChatMessage(text);
+    } else {
+      render();
+    }
+  };
+  sttRec = rec;
+  try{ rec.start(); }
+  catch(err){ sttError = 'Não foi possível iniciar o microfone.'; render(); }
+}
+
+function renderChat(){
+  document.body.style.background = '';
+  const history = chatHistory();
+  const hasKey = !!chatApiKey();
+  const showPinyin = chatGet(CHAT_STORAGE.showPinyin, true);
+  const showPt = chatGet(CHAT_STORAGE.showPt, true);
+
+  let bodyHtml;
+  if(history.length === 0){
+    bodyHtml = `
+      <div class="chat-empty">
+        <div class="ce-icon">🐉</div>
+        <div class="ce-title">和老师聊天</div>
+        <div class="ce-sub">Pratique mandarim com um tutor IA. Ele entende português, corrige seus erros e sugere frases melhores.</div>
+        ${hasKey
+          ? `<button class="ce-cta" data-action="suggest-start">💬 Começar conversa</button>`
+          : `<button class="ce-cta" data-action="open-settings">🔑 Configurar chave da API</button>`
+        }
+      </div>`;
+  } else {
+    bodyHtml = history.map((t,i)=>{
+      if(t.role === 'user'){
+        return `<div class="bubble user">${escapeHtml2(t.text)}</div>`;
+      } else if(t.role === 'error'){
+        return `<div class="bubble ai" style="border-color:var(--red);color:var(--red)">⚠ ${escapeHtml2(t.text)}</div>`;
+      } else {
+        const d = t.data || {};
+        const corrHtml = (d.corrections||[]).length === 0 ? '' : `
+          <div class="b-card">
+            <div class="b-card-title">✎ Correções</div>
+            ${d.corrections.map(c=>`
+              <div class="b-corr-row">
+                <span class="b-corr-orig">${escapeHtml2(c.original||'')}</span>
+                <span class="b-corr-fix">${escapeHtml2(c.fixed||'')}</span>
+                <div class="b-corr-expl">${escapeHtml2(c.explanation||'')}</div>
+              </div>`).join('')}
+          </div>`;
+        const sugHtml = (d.suggestions||[]).length === 0 ? '' : `
+          <div class="b-card suggest">
+            <div class="b-card-title">💡 Sugestões</div>
+            ${d.suggestions.map(s=>`<div class="b-sug-row">${escapeHtml2(s)}</div>`).join('')}
+          </div>`;
+        return `
+          <div class="bubble ai">
+            <div class="b-hanzi">${escapeHtml2(d.reply_hanzi||'')}</div>
+            ${showPinyin && d.reply_pinyin ? `<div class="b-pinyin">${escapeHtml2(d.reply_pinyin)}</div>` : ''}
+            ${showPt && d.reply_pt ? `<div class="b-pt">${escapeHtml2(d.reply_pt)}</div>` : ''}
+            <button class="b-audio" data-action="speak" data-text="${escapeHtml2(d.reply_hanzi||'')}">🔊 Ouvir</button>
+          </div>
+          ${corrHtml}
+          ${sugHtml}`;
+      }
+    }).join('');
+    if(chatPending){
+      bodyHtml += `<div class="b-thinking">老师在想… (pensando)</div>`;
+    }
+  }
+
+  const sendDisabled = chatPending || !(chatDraft||'').trim();
+  app.innerHTML = `
+    ${statusBarHtml()}
+    <div class="chat-page">
+      <div class="chat-top">
+        <button class="top-icon" data-action="back-home">←</button>
+        <div class="title">中文对话</div>
+        <button class="top-icon" data-action="open-settings" title="Ajustes">⚙</button>
+      </div>
+      <div class="chat-body" id="chat-body">${bodyHtml}</div>
+      ${sttError ? `<div class="stt-banner">${escapeHtml2(sttError)}</div>` : ''}
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chat-input" rows="1" placeholder="${sttListening ? '🎙 Ouvindo… fale!' : (hasKey?'Escreva ou fale 🎤':'Configure sua chave primeiro (⚙)')}" ${hasKey?'':'disabled'}></textarea>
+        ${sttSupported() ? `
+          <button class="stt-lang" data-action="stt-lang" title="Trocar idioma de fala" ${chatPending?'disabled':''}>
+            ${sttLang()==='zh-CN' ? '<span class="cn">中</span>' : 'PT'}
+          </button>
+          <button class="stt-mic ${sttListening?'listening':''}" data-action="stt-mic" title="${sttListening?'Tocar para parar':'Falar'}" ${(!hasKey||chatPending)?'disabled':''}>${sttListening?'⏹':'🎤'}</button>
+        ` : ''}
+        <button class="chat-send" data-action="send" ${sendDisabled||!hasKey?'disabled':''}>➤</button>
+      </div>
+    </div>
+    ${chatModalOpen ? renderChatSettingsModal() : ''}`;
+
+  // Bind
+  app.querySelector('[data-action="back-home"]').addEventListener('click',()=>{ screen={name:'home'}; chatModalOpen=false; render(); });
+  app.querySelector('[data-action="open-settings"]').addEventListener('click',()=>{ chatModalOpen=true; render(); });
+  const startBtn = app.querySelector('[data-action="suggest-start"]');
+  if(startBtn) startBtn.addEventListener('click',()=>{ sendChatMessage('你好！我们用中文聊天吧。'); });
+  const openSettings2 = app.querySelectorAll('[data-action="open-settings"]');
+  openSettings2.forEach(el=>{ if(!el.dataset.bound){ el.dataset.bound='1'; } });
+
+  app.querySelectorAll('[data-action="speak"]').forEach(el=>{
+    el.addEventListener('click',()=>speak(el.dataset.text));
+  });
+  const input = app.querySelector('#chat-input');
+  if(input){
+    input.value = chatDraft;
+    input.addEventListener('input',()=>{
+      chatDraft = input.value;
+      const sb = app.querySelector('[data-action="send"]');
+      if(sb){
+        if(chatPending || !chatDraft.trim() || !hasKey) sb.setAttribute('disabled',''); else sb.removeAttribute('disabled');
+      }
+      input.style.height='auto';
+      input.style.height=Math.min(120, input.scrollHeight)+'px';
+    });
+    input.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChatMessage(input.value); }
+    });
+  }
+  const sendBtn = app.querySelector('[data-action="send"]');
+  if(sendBtn) sendBtn.addEventListener('click',()=>{
+    const v = (app.querySelector('#chat-input')||{}).value || chatDraft;
+    sendChatMessage(v);
+  });
+  const micBtn = app.querySelector('[data-action="stt-mic"]');
+  if(micBtn) micBtn.addEventListener('click',()=>{ sttStart(); });
+  const langBtn = app.querySelector('[data-action="stt-lang"]');
+  if(langBtn) langBtn.addEventListener('click',()=>{ sttToggleLang(); render(); });
+
+  // Scroll to bottom
+  const cb = app.querySelector('#chat-body');
+  if(cb) cb.scrollTop = cb.scrollHeight;
+
+  // Settings modal events
+  if(chatModalOpen) bindChatSettingsModal();
+}
+
+function renderChatSettingsModal(){
+  const key = chatApiKey();
+  const model = chatModel();
+  const showPinyin = chatGet(CHAT_STORAGE.showPinyin, true);
+  const showPt = chatGet(CHAT_STORAGE.showPt, true);
+  const masked = key ? '••••••••'+key.slice(-6) : '';
+  return `
+    <div class="modal-overlay" data-action="modal-close-bg">
+      <div class="modal" onclick="event.stopPropagation()">
+        <h2>设置 Ajustes do chat</h2>
+        <p class="modal-sub">Sua chave fica salva só no seu celular (localStorage).</p>
+
+        <label>Chave da API Google Gemini</label>
+        <input type="password" id="m-key" placeholder="${masked||'AIza...'}" autocomplete="off" autocapitalize="off">
+        <div class="hint">
+          Pegue uma chave grátis em <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.
+          O Gemini tem free tier generoso (~1500 reqs/dia no Flash) — não precisa adicionar cartão de crédito.
+          ${key?'<br><strong>Chave atual salva</strong> (deixe em branco pra manter).':''}
+        </div>
+
+        <label>Modelo</label>
+        <select id="m-model">
+          ${MODELS.map(m=>`<option value="${m.id}" ${m.id===model?'selected':''}>${escapeHtml2(m.label)}</option>`).join('')}
+        </select>
+
+        <label>Exibição</label>
+        <div style="display:flex;gap:14px;font-size:13px;font-weight:700;color:var(--ink)">
+          <label style="text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:6px">
+            <input type="checkbox" id="m-pinyin" ${showPinyin?'checked':''}> Mostrar pinyin
+          </label>
+          <label style="text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:6px">
+            <input type="checkbox" id="m-pt" ${showPt?'checked':''}> Mostrar PT
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" data-action="modal-cancel">Cancelar</button>
+          <button class="btn-save" data-action="modal-save">Salvar</button>
+        </div>
+        <div class="modal-actions" style="margin-top:8px">
+          <button class="btn-danger" data-action="modal-clear-key">Apagar chave</button>
+          <button class="btn-danger" data-action="modal-clear-chat">Limpar conversa</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function bindChatSettingsModal(){
+  const close = ()=>{ chatModalOpen=false; render(); };
+  app.querySelector('[data-action="modal-close-bg"]').addEventListener('click',close);
+  app.querySelector('[data-action="modal-cancel"]').addEventListener('click',close);
+  app.querySelector('[data-action="modal-save"]').addEventListener('click',()=>{
+    const keyEl = document.getElementById('m-key');
+    const modelEl = document.getElementById('m-model');
+    const pyEl = document.getElementById('m-pinyin');
+    const ptEl = document.getElementById('m-pt');
+    const newKey = (keyEl.value||'').trim();
+    if(newKey) chatSet(CHAT_STORAGE.key, newKey);
+    chatSet(CHAT_STORAGE.model, modelEl.value);
+    chatSet(CHAT_STORAGE.showPinyin, !!pyEl.checked);
+    chatSet(CHAT_STORAGE.showPt, !!ptEl.checked);
+    close();
+  });
+  app.querySelector('[data-action="modal-clear-key"]').addEventListener('click',()=>{
+    if(confirm('Apagar a chave salva neste dispositivo?')){
+      localStorage.removeItem(CHAT_STORAGE.key);
+      close();
+    }
+  });
+  app.querySelector('[data-action="modal-clear-chat"]').addEventListener('click',()=>{
+    if(confirm('Apagar todo o histórico de conversa?')){
+      chatSetHistory([]);
+      close();
+    }
+  });
+}
+
+function render(){
+  state = applyHeartRegen(state);
+  saveState();
+  switch(screen.name){
+    case 'home': return renderHome();
+    case 'level': return renderLevel();
+    case 'lesson': return renderLesson();
+    case 'finished': return renderFinished();
+    case 'failed': return renderFailed();
+    case 'badges': return renderBadges();
+    case 'vocab': return renderVocab();
+    case 'chat': return renderChat();
+  }
+}
+
+render();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
